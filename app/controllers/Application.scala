@@ -1,25 +1,22 @@
 package controllers
 
-import business.WK
+import business.SwiperDeal
 import play.api._
 import play.api.mvc._
+import mobels.reqarg._
 
-import scala.concurrent.Future
-
-//import security
 
 class Application extends Controller {
+  def index = Action { Ok(views.html.index("Your new application is ready."))}
 
-  def index = Action {
-//    println(WK("9D37F2AF79A3B42F9D37F2AF79A3B42F","82570010", "8257001000487725", "51309FA0", "000188").key)
-    Ok(views.html.index("Your new application is ready."))
-  }
+  implicit val swiperdb:Map[String, String] = Map(
+    "F00182570008000427508257000800042750"->"11111111111111111111111111111111",
+    "F00182570010004877258257001000487725"->"9D37F2AF79A3B42F9D37F2AF79A3B42F")
 
-  def testAction = Action(parse.tolerantText) { req =>
-    println(s"[${req.body}]")
+  def cqjrMockDeal = Action(parse.form(xmlForm)) { req =>
+    val requestPram:DealDescriptor = ParamBuilde.build(req.body)
+    val swiperDeal:SwiperDeal = SwiperDeal(requestPram.cardInfo)
+    val builder = SwiperInfoBuild(requestPram, swiperDeal, MockMkQuery.queryMainKey(swiperDeal.psam))
     Ok("Hello play")
   }
-
-
-
 }
