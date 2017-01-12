@@ -16,6 +16,7 @@ class Application extends Controller {
   def cqjrMockDeal = Action(parse.form(xmlForm)) { req =>
     val requestPram:DealDescriptor = ParamBuilde.build(req.body)
     val swiperDeal:SwiperDeal = SwiperDeal(requestPram.cardInfo)
+
     val plaintInfo = SwiperInfoBuild.cacPlaint(SwiperInfoBuild(requestPram, swiperDeal,
       MockMkQuery.queryMainKey(swiperDeal.psam)))
     Ok(plaintInfo.toString)

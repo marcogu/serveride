@@ -1,6 +1,7 @@
 package mobels.reqarg
 
 import business.{MACer, SwiperDeal, WK}
+import security.BCDCoder
 
 
 /**
@@ -21,11 +22,19 @@ object SwiperInfoBuild {
   }
 
   import security.TripleDesEncrypt._
-  def cacPlaint(reqInfo:SwiperRequestInfo):PaintSwiperInfo = PaintSwiperInfo (
-    byts2hex(decript(adpatorKeyLen(reqInfo.trackWk.key), reqInfo.swiperInfo.track2)),
-    byts2hex(decript(adpatorKeyLen(reqInfo.trackWk.key), reqInfo.swiperInfo.track3)),
-    MACer.cacMacd( MBA(reqInfo.swiperInfo) , reqInfo.macWK.key )
-  )
+  def cacPlaint(reqInfo:SwiperRequestInfo):PaintSwiperInfo = {
+    val t2:String = decript(adpatorKeyLen(reqInfo.trackWk.key), reqInfo.swiperInfo.track2)
+    val t3:String = decript(adpatorKeyLen(reqInfo.trackWk.key), reqInfo.swiperInfo.track3)
+    val mc:String = MACer.cacMacd( mbaOld(reqInfo) , reqInfo.macWK.key )
+    PaintSwiperInfo ( t2, t3, mc)
+  }
 
-  def MBA(swiperInfo:SwiperDeal):String = swiperInfo.track2 + swiperInfo.track3 + swiperInfo.trackRandom + "amount"
+  def mbaOld(d:SwiperRequestInfo):String = d.swiperInfo.track2 +
+    d.swiperInfo.track3 +
+    d.swiperInfo.trackRandom +
+    d.swiperInfo.psam +
+    d.trackWk.psam +
+    BCDCoder.ascToBcd(d.request.orderId)
+
+  def MBA(swiperInfo:SwiperDeal):String = swiperInfo.track2 + swiperInfo.track3 + swiperInfo.trackRandom + "0000001"
 }
