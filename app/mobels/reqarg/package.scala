@@ -14,11 +14,9 @@ package object reqarg {
   )
 
   object MockMkQuery{
-
     def queryMainKey(psam:String)(implicit db:Map[String, String] = Map.empty[String, String]):String = db(psam) match {
-      case null =>  "11111111111111111111111111111111"
+      case null =>  "9D37F2AF79A3B42F9D37F2AF79A3B42F"
       case other => other
     }
-
   }
 }
