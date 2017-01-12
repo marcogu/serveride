@@ -18,6 +18,8 @@ class Application extends Controller {
     val swiperDeal:SwiperDeal = SwiperDeal(requestPram.cardInfo)
     val builder = SwiperInfoBuild(requestPram, swiperDeal, MockMkQuery.queryMainKey(swiperDeal.psam))
 
+    println(requestPram.cardInfo)
+
     val responseInfo = s"\ntrack working key is: ${builder.trackWk.key}\n" +
       s"mac working key is: ${builder.macWK.key}\n"
     Ok(responseInfo)
