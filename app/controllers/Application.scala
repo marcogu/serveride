@@ -15,12 +15,18 @@ class Application extends Controller {
     "F00182570010004877258257001000487725"->"9D37F2AF79A3B42F9D37F2AF79A3B42F")
 
 
-  def cqjrMockDeal = Action(parse.form(xmlForm)) { req =>
+  def cqjrMockDeal(useOldMacCac:String) = Action(parse.form(xmlForm)) { req =>
     val requestPram:DealDescriptor = ParamBuilde.build(req.body)
     val swiperDeal:SwiperDeal = SwiperDeal(requestPram.cardInfo)
     Logger.debug(s"request xml=${requestPram.contentXml}")
-    val plaintInfo = SwiperInfoBuild.cacPlaint(SwiperInfoBuild(requestPram, swiperDeal,
-      MockMkQuery.queryMainKey(swiperDeal.psam)))
+
+    val plaintInfo = useOldMacCac match {
+      case "olderMac" =>SwiperInfoBuild.cacPlaint(SwiperInfoBuild(requestPram, swiperDeal,
+        MockMkQuery.queryMainKey(swiperDeal.psam)), SwiperInfoBuild.mbaOld)
+      case other =>SwiperInfoBuild.cacPlaint(SwiperInfoBuild(requestPram, swiperDeal,
+        MockMkQuery.queryMainKey(swiperDeal.psam)), SwiperInfoBuild.MBA)
+    }
+
     Logger.debug(s"paint info track2=${plaintInfo.track2}, track3=${plaintInfo.track3}, mac=${plaintInfo.reMac}")
     Ok(Json.toJson(plaintInfo))
   }

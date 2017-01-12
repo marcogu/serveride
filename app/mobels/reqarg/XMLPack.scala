@@ -26,6 +26,7 @@ trait DealDescriptor extends XMLParam {
   lazy val transLogNo:String = contentXml \\ "transLogNo" text
   lazy val ICCardValidDate:String = contentXml \\ "ICCardValidDate" text
   lazy val transDate:String = contentXml \\ "transDate" text
+  lazy val orderAmt:String = contentXml \\ "orderAmt" text
 }
 
 class Deal(pack:XMLParam) extends DealDescriptor{
@@ -34,7 +35,7 @@ class Deal(pack:XMLParam) extends DealDescriptor{
 
 object ParamBuilde {
   def build[T](xmlPack:XMLParam):T = xmlPack.descriptor match {
-    case "BankCardBalance.Req" => new Deal(xmlPack).asInstanceOf[T]
+    case "BankCardBalance.Req" | "JFPalCardPay.Req" => new Deal(xmlPack).asInstanceOf[T]
     case other => null.asInstanceOf[T]
   }
 }

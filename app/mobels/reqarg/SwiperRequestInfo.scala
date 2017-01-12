@@ -28,11 +28,11 @@ object SwiperInfoBuild {
   }
 
   import security.TripleDesEncrypt._
-  def cacPlaint(reqInfo:SwiperRequestInfo):PaintSwiperInfo = {
+  def cacPlaint(reqInfo:SwiperRequestInfo, mabCreator:(SwiperRequestInfo)=>String):PaintSwiperInfo = {
     Logger.debug(s"track working key=${reqInfo.trackWk.key}, mac working key=${reqInfo.macWK.key}")
     val t2:String = decript(adpatorKeyLen(reqInfo.trackWk.key), reqInfo.swiperInfo.track2)
     val t3:String = decript(adpatorKeyLen(reqInfo.trackWk.key), reqInfo.swiperInfo.track3)
-    val mc:String = MACer.cacMacd( mbaOld(reqInfo) , reqInfo.macWK.key )
+    val mc:String = MACer.cacMacd( mabCreator(reqInfo) , reqInfo.macWK.key )
     PaintSwiperInfo ( t2, t3, mc)
   }
 
@@ -46,5 +46,11 @@ object SwiperInfoBuild {
     r
   }
 
-  def MBA(swiperInfo:SwiperDeal):String = swiperInfo.track2 + swiperInfo.track3 + swiperInfo.trackRandom + "0000001"
+  def MBA(d:SwiperRequestInfo):String = {
+    val formatedAmount = d.request.orderAmt match {
+      case "" => ""
+      case other => "%016d".format(Integer.parseInt(other))
+    }
+    d.swiperInfo.track2 + d.swiperInfo.track3 + d.swiperInfo.trackRandom + formatedAmount
+  }
 }
