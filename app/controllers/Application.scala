@@ -16,12 +16,8 @@ class Application extends Controller {
   def cqjrMockDeal = Action(parse.form(xmlForm)) { req =>
     val requestPram:DealDescriptor = ParamBuilde.build(req.body)
     val swiperDeal:SwiperDeal = SwiperDeal(requestPram.cardInfo)
-    val swipeInfo = SwiperInfoBuild(requestPram, swiperDeal, MockMkQuery.queryMainKey(swiperDeal.psam))
-
-    println(requestPram.cardInfo)
-
-    val responseInfo = s"\ntrack working key is: ${swipeInfo.trackWk.key}\n" +
-      s"mac working key is: ${swipeInfo.macWK.key}\n"
-    Ok(responseInfo)
+    val plaintInfo = SwiperInfoBuild.cacPlaint(SwiperInfoBuild(requestPram, swiperDeal,
+      MockMkQuery.queryMainKey(swiperDeal.psam)))
+    Ok(plaintInfo)
   }
 }
