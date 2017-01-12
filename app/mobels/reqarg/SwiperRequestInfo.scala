@@ -1,6 +1,8 @@
 package mobels.reqarg
 
 import business.{MACer, SwiperDeal, WK}
+import play.api.Logger
+import play.api.libs.json.Json
 import security.BCDCoder
 
 
@@ -10,6 +12,10 @@ import security.BCDCoder
 
 case class PaintSwiperInfo(track2:String, track3:String, reMac:String)
 case class SwiperRequestInfo(trackWk:WK, macWK:WK, request:DealDescriptor, swiperInfo:SwiperDeal)
+
+object PaintSwiperInfo{
+  implicit val jsFormat = Json.format[PaintSwiperInfo]
+}
 
 
 object SwiperInfoBuild {
@@ -23,18 +29,22 @@ object SwiperInfoBuild {
 
   import security.TripleDesEncrypt._
   def cacPlaint(reqInfo:SwiperRequestInfo):PaintSwiperInfo = {
+    Logger.debug(s"track working key=${reqInfo.trackWk.key}, mac working key=${reqInfo.macWK.key}")
     val t2:String = decript(adpatorKeyLen(reqInfo.trackWk.key), reqInfo.swiperInfo.track2)
     val t3:String = decript(adpatorKeyLen(reqInfo.trackWk.key), reqInfo.swiperInfo.track3)
     val mc:String = MACer.cacMacd( mbaOld(reqInfo) , reqInfo.macWK.key )
     PaintSwiperInfo ( t2, t3, mc)
   }
 
-  def mbaOld(d:SwiperRequestInfo):String = d.swiperInfo.track2 +
-    d.swiperInfo.track3 +
-    d.swiperInfo.trackRandom +
-    d.swiperInfo.psam +
-    d.trackWk.psam +
-    BCDCoder.ascToBcd(d.request.orderId)
+  def mbaOld(d:SwiperRequestInfo):String ={
+    val r = d.swiperInfo.track2 +
+      d.swiperInfo.track3 +
+      d.swiperInfo.trackRandom +
+      d.swiperInfo.psam +
+      BCDCoder.ascToBcd(d.request.orderId)
+    Logger.debug(s"MBA info=$r")
+    r
+  }
 
   def MBA(swiperInfo:SwiperDeal):String = swiperInfo.track2 + swiperInfo.track3 + swiperInfo.trackRandom + "0000001"
 }
