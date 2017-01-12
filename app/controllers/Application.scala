@@ -18,6 +18,6 @@ class Application extends Controller {
     val swiperDeal:SwiperDeal = SwiperDeal(requestPram.cardInfo)
     val plaintInfo = SwiperInfoBuild.cacPlaint(SwiperInfoBuild(requestPram, swiperDeal,
       MockMkQuery.queryMainKey(swiperDeal.psam)))
-    Ok(plaintInfo)
+    Ok(plaintInfo.toString)
   }
 }
