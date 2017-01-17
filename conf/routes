@@ -4,7 +4,13 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET		/card/:info					controllers.Application.parserCardInfo(info)
+GET		/card/:info/:tslog/:mcModel controllers.Application.decodeTranc2By(info, tslog, mcModel)
+GET		/wkey/:r/:ts/:ksn			controllers.Application.wkey(r, ts, ksn)
+GET		/mac/:wk/:data				controllers.Application.macCacWith(wk,data)
+GET		/3des/:key/:data			controllers.Application.des3(key,data)
 POST    /mockserivce/:macModel      controllers.Application.cqjrMockDeal(macModel)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
