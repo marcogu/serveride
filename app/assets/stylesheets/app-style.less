@@ -1,0 +1,191 @@
+@import "lib/bootstrap/less/bootstrap.less";
+
+*:focus { outline: none; }
+input{outline:none}
+
+.oemboard {
+  background-color: #74AEDD;
+
+  /*border-color: #74AEDD;
+  border-radius: 4px;
+  border: 2px solid #74AEDD;*/
+}
+
+.oemBorder{
+  background-color: #fff;
+  border-radius: 4px;
+  border-color: #fff;
+}
+
+.oemSel{
+  background-color: #74AEDD;
+  border-radius: 4px;
+  /*border-color: #74AEDD;
+  border-radius: 4px;
+  border: 2px solid #74AEDD; */
+}
+
+.oems-list {
+  padding: 6px;
+  .oem-wrapper {
+    display: table-cell;
+    cursor: pointer;
+    padding-left: 10px;
+  }
+
+  .oem-icon {
+    width: 36px;
+    height: 36px;
+    vertical-align: top;
+    background-color: #979DA7;
+  }
+
+  .type-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    /*&:extend(.oemboard);*/
+    border: 1px solid #74AEDD;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .25s, -webkit-box-shadow ease-in-out .25s;
+    -o-transition: border-color ease-in-out .25s, box-shadow ease-in-out .25s;
+    transition: border-color ease-in-out .25s, box-shadow ease-in-out .25s;
+  }
+}
+
+.modal-backdrop {
+  top: 0;
+  bottom: 0;
+}
+
+.alert {
+  outline: 0
+}
+
+.alert.bottom, .alert.bottom-left, .alert.bottom-right, .alert.top,
+.alert.top-left, .alert.top-right {
+  position: fixed;
+  z-index: 1050;
+  margin: 20px
+}
+
+.alert.top, .alert.top-left, .alert.top-right {
+  top: 50px
+}
+
+.alert.top {
+  right: 0;
+  left: 0
+}
+
+.alert.top-right {
+  right: 0
+}
+
+.alert.top-right .close {
+  padding-left: 10px
+}
+
+.alert.top-left {
+  left: 0
+}
+
+.alert.top-left .close {
+  padding-right: 10px
+}
+
+.alert.bottom, .alert.bottom-left, .alert.bottom-right {
+  bottom: 0
+}
+
+.alert.bottom {
+  right: 0;
+  left: 0
+}
+
+.alert.bottom-right {
+  right: 0
+}
+
+.alert.bottom-right .close {
+  padding-left: 10px
+}
+
+.alert.bottom-left {
+  left: 0
+}
+
+.alert.bottom-left .close {
+  padding-right: 10px
+}
+
+/* oem edit panel animation */
+.hpfade.ng-hide-remove, .hpfade.ng-enter {
+  -webkit-transition: 0.3s ease-in all;
+  -moz-transition: 0.3s ease-in all;
+  -o-transition: 0.3s ease-in all;
+  transition: 0.3s ease-in all;
+  height: 0.1px;
+  opacity: 0;
+}
+
+.hpfade.ng-hide-remove.ng-hide-remove-active, .hpfade.ng-enter.ng-enter-active {
+  height: 323px;
+  opacity: 1;
+}
+
+.hpfade.ng-hide-add, .hpfade.ng-leave{
+  -webkit-transition: 0.3s ease-out all;
+  -moz-transition: 0.3s ease-out all;
+  -o-transition: 0.3s ease-out all;
+  transition: 0.3s ease-out all;
+  height: 323px;
+  opacity: 1;
+}
+
+.hpfade.ng-hide-add.ng-hide-add-active, .hpfade.ng-leave.ng-leave-active {
+  height: 0.1px;
+  opacity: 0;
+}
+
+/* schema ng-swith animation */
+.sdLeft, .sdRight{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+.sdLeft.ng-enter{ animation: moveFromRight .3s both;  }
+.sdLeft.ng-leave{ animation: moveToLeft .3s both; }
+.sdRight.ng-enter{ animation: moveFromLeft .3s both; }
+.sdRight.ng-leave{ animation: moveToRight .3s both; }
+ /*group 1*/
+@keyframes moveFromRight{ from {  transform: translateX(100%);  } }
+@keyframes moveToLeft{ to {  transform: translateX(-100%);  } }
+/* group 2 */
+@keyframes moveFromLeft{ from {  transform: translateX(-100%);  } }
+@keyframes moveToRight{ to {  transform: translateX(100%);  } }
+
+/* custome input file component style */
+.fileUpload {
+  position: relative;
+  overflow: hidden;
+  margin: 10px;
+}
+.fileUpload input.upload {
+  position: absolute;
+  top: -1000px;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+
+

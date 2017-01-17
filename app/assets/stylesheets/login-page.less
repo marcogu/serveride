@@ -1,0 +1,220 @@
+.login-page {
+  .container {
+    max-width: 960px;
+  }
+
+  .navbar-gitlab .container {
+    max-width: none;
+  }
+
+  .brand-holder {
+    font-size: 18px;
+    line-height: 1.5;
+
+    p {
+      color: #888;
+    }
+
+    h1:first-child {
+      font-weight: normal;
+      margin-bottom: 30px;
+    }
+
+    img {
+      max-width: 100%;
+      margin-bottom:  30px;
+    }
+
+    a {
+      font-weight: bold;
+    }
+  }
+
+  .login-box{
+    background: #fafafa;
+    border-radius: 10px;
+    box-shadow: 0 0px 2px #CCC;
+    padding: 15px;
+
+    .login-heading h3 {
+      font-weight: 300;
+      line-height: 1.5;
+      margin: 0 0 10px 0;
+    }
+
+    .login-footer {
+      margin-top: 10px;
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    a.forgot {
+      float: right;
+      padding-top: 6px
+    }
+
+    .nav .active a {
+      background: transparent;
+    }
+  }
+
+  .border-radius(@radius){
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    -ms-border-radius: @radius;
+    -o-border-radius: @radius;
+    border-radius: @radius;
+  }
+
+  .form-control {
+    font-size: 14px;
+    padding: 10px 8px;
+    width: 100%;
+    height: auto;
+
+    &.top {
+      .border-radius(5px);
+      margin-bottom: 0px;
+    }
+
+    &.bottom {
+      .border-radius(5px);
+      border-top: 0;
+      margin-bottom: 20px;
+    }
+
+    &.middle {
+      border-top: 0;
+      margin-bottom:0px;
+      .border-radius(0);
+    }
+
+    &:active, &:focus {
+      background-color: #FFF;
+    }
+  }
+
+  .devise-errors {
+    h2 {
+      margin-top: 0;
+      font-size: 14px;
+      color: #a00;
+    }
+  }
+
+  .remember-me {
+    margin-top: -10px;
+
+    label {
+      font-weight: normal;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .login-page .col-sm-5.pull-right {
+    float: none !important
+  }
+}
+
+.container {
+  padding-top: 0;
+  z-index: 5
+}
+
+.container .content {
+  margin: 0 0;
+}
+
+.navless-container {
+  margin-top: 58px;
+  padding-top: 32px
+}
+
+.pull-right {
+  float: right !important;
+}
+
+.pull-left {
+  float: left !important;
+}
+
+
+// origin
+//.alert {
+//  a:not(.btn) {
+//  @extend .alert-link;
+//    color: #fff;
+//    text-decoration: underline;
+//  }
+//}
+//
+
+@alert-danger-bg:#d9534f;
+@alert-danger-text:white;
+
+.flash-container {
+  cursor: pointer;
+  margin: 0;
+  font-size: 14px;
+  width: 100%;
+  z-index: 100;
+
+
+
+  .flash-alert:extend(.alert, .alert-danger){}
+
+  // marco hack
+  //.flash-alert:extend(.alert){
+  //  background-color: #d9534f;
+  //  border-color: #d9534f;
+  //  padding: 15px;
+  //  margin-bottom: 20px;
+  //  border: 1px solid transparent;
+  //  border-radius: 0;
+  //  color: white
+  //}
+}
+//
+// my version
+
+// origin : scss
+//@media (max-width: @screen-xs-max) {
+//  .login-page {
+//    .col-sm-5.pull-right{
+//      float: none !important;
+//    }
+//  }
+//}
+
+// origin output: css
+//@media (max-width: 767px) {
+//  .login-page .col-sm-5.pull-right {
+//    float: none !important
+//  }
+//}
+
+.btn:extend(.btn-default) {
+  &.btn-save:extend(.btn-primary) {}
+}
+
+.btn-block {
+  width: 100%;
+  margin: 0;
+  margin-bottom: 15px;
+  &.btn {
+    padding: 6px 0;
+  }
+}
+
+.btn-group {
+  &.btn-grouped {
+    margin-right: 7px;
+    float: left;
+    &:last-child {
+      margin-right: 0px;
+    }
+  }
+}

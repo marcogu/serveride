@@ -1,0 +1,31 @@
+@import models.viewparam.MainTempateArguments
+@(bodyContent: Html)(implicit primaryTempConfig:MainTempateArguments)
+<!DOCTYPE html>
+@displayResourceTags(tagName:String, propertyName:String, resourceUrls:Seq[String], typeStr:String, otherProperty:String) = {
+    @for(resouceUrl <- resourceUrls) {
+        <@tagName @Html(typeStr) @propertyName="@resouceUrl" @Html(otherProperty)> </@tagName>
+    }
+}
+<html>
+    <head>
+        @for(meta <- primaryTempConfig.metas){
+            <meta @Html(primaryTempConfig.toXmlPropertyString(meta)) >
+        }
+        @if(primaryTempConfig.baseHref.nonEmpty){
+            <base href="@primaryTempConfig.baseHref.get">
+        }
+        @if(primaryTempConfig.title != null) {
+            <title>@primaryTempConfig.title</title>
+        }
+        @if(primaryTempConfig.cssUrl.nonEmpty) {
+            @displayResourceTags("link", "href", primaryTempConfig.cssUrl.get, "type=\"text/css\"", "rel=\"stylesheet\"")
+        }
+        @if(primaryTempConfig.jsUrl.nonEmpty) {
+            @displayResourceTags("script", "src", primaryTempConfig.jsUrl.get, "type=\"text/javascript\"", "")
+        }
+        @*<link rel="shortcut icon" href="@routes.Assets.at("favicon.ico")">*@
+    </head>
+    <body>
+        @bodyContent
+    </body>
+</html>
