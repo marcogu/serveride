@@ -1,4 +1,4 @@
-package mobels.reqarg
+package models.reqarg
 
 import business.{MACer, SwiperDeal, WK}
 import play.api.Logger

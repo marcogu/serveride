@@ -1,7 +1,7 @@
 package controllers
 
 import business.{MACer, WK, SwiperDeal}
-import mobels.reqarg._
+import models.reqarg._
 import security.TripleDesEncrypt
 import play.api.Logger
 import play.api.libs.json.Json
@@ -10,7 +10,7 @@ import play.api.mvc._
 /**
   * Created by marco on 2017/1/17.
   */
-class SoftEnryptController extends Controller{
+class SwiperToolCtrler extends Controller{
   implicit val swiperdb:Map[String, String] = Map(
     "F00182570008000427508257000800042750"->"11111111111111111111111111111111",
     "F00182570010004877258257001000487725"->"9D37F2AF79A3B42F9D37F2AF79A3B42F")
@@ -65,10 +65,10 @@ class SoftEnryptController extends Controller{
     Ok(Json.toJson(jsonResult))
   }
 
-  def wkey(random:String, tslog:String, ksn:String) = Action {
+  def wkey(random:String, tslog:String, ksn:String, mKey:String) = Action {
     val fullPsamFromKsn:String = ksn.substring(4, 20)
     val merchantId:String = fullPsamFromKsn.substring(0, 8)
-    val wk = WK(MockMkQuery.queryMainKey(ksn), merchantId, fullPsamFromKsn, random, tslog)
+    val wk = WK(mKey, merchantId, fullPsamFromKsn, random, tslog)
     Ok(Json.toJson(Map("workingKey" -> wk.key )))
   }
 
@@ -79,6 +79,11 @@ class SoftEnryptController extends Controller{
 
   def des3(key:String, data:String) = Action {
     val result:String = TripleDesEncrypt.encrypt(adpatorKeyLen(key), data)
+    Ok(result)
+  }
+
+  def d3des(key:String, data:String) = Action {
+    val result:String = TripleDesEncrypt.decript(adpatorKeyLen(key), data)
     Ok(result)
   }
 }
