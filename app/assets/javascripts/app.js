@@ -125,9 +125,25 @@ app.controller('SwiperToolController', ['$scope', '$element', '$http', '$modal',
 
 	$scope.cmtParserCinfo = function(info){
 		let url = `/card/${info}`;
+		let alertTarget = event.target.parentElement;
 		$http.get(url).success(function(data, state, header){
 			$modal({title: '3DES decrypt result',
 				content: `<html>${JSON.stringify(data, null, '\t')}</html>`, placement:"center",
+					backdrop:"static",
+					show: true, html:true, element:angular.element([alertTarget])});
+		}).error(function(error, status, header){
+			$modal({title: 'Title', content: error, placement:"center",
+				backdrop:"static",
+				show: true, html:true, element:angular.element([alertTarget])});
+		})
+	};
+
+	$scope.showTestCase = function(){
+		let url = "/view/siwpertestcase";
+		let alertTarget = event.target.parentElement;
+		$http.get(url).success(function(data, state, header){
+			$modal({title: '测试用例：',
+				content:data, placement:"center",
 					backdrop:"static",
 					show: true, html:true, element:angular.element([alertTarget])});
 		}).error(function(error, status, header){
