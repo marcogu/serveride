@@ -20,4 +20,6 @@ GET     /assets/javascripts/*file       controllers.Assets.at(path="/public/java
 GET     /assets/stylesheets/*file       controllers.Assets.at(path="/public/stylesheets", file)
 GET     /assets/images/*file            controllers.Assets.at(path="/public/images", file)
 
+GET		/hello						controllers.Application.mpostest
+
     
