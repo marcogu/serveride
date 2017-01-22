@@ -6,7 +6,7 @@
 var app = angular.module('OemTool', ['ngRoute','ngAnimate', 'ngSanitize', 'mgcrea.ngStrap']);
 app.config(['$routeProvider', function($routeProvider){
 	$routeProvider.when('/oems', {templateUrl : '/view/swipertool'});
-	$routeProvider.when('/schema', {templateUrl : '/view/dashboard/taskschema'});
+	$routeProvider.when('/schema', {templateUrl : '/view/sqltool'});
 	$routeProvider.when('/strapt', {templateUrl : '/view/dashboard/viewtest'});
 	$routeProvider.when('/setting', {templateUrl : '/view/dashboard/setting'});
 	$routeProvider.when('/history', {templateUrl : '/view/dashboard/packhistory'});
@@ -152,4 +152,8 @@ app.controller('SwiperToolController', ['$scope', '$element', '$http', '$modal',
 				show: true, html:true, element:angular.element([alertTarget])});
 		})
 	}
+}]);
+
+app.controller('SqltoolController', ['$scope', '$element', '$http', '$modal', function($scope, $element, $http, $modal){
+
 }]);

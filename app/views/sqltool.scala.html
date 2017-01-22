@@ -1,0 +1,21 @@
+<div class="col-md-10 " ng-controller="SqltoolController">
+
+    <div class="row">
+
+    </div>
+        <!-- split header and content -->
+    <div class="row" style="height:10px;"></div>
+
+    <!-- content compnent -->
+    <div class="row" ng-switch="contentState">
+        <div id="divQuery" ng-switch-when="query">
+            <form class="form-horizontal">
+                <div class="form-group form-group-sm">
+                    <div class="col-sm-3"></div>
+                    <label class="col-sm-4 control-label">查询sql</label>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

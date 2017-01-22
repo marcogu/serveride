@@ -1,11 +1,8 @@
 package controllers
 
-import javax.inject.Inject
-
 import models.viewparam.MainTempateArguments
 import play.Logger
 import play.api.mvc._
-import play.api.db.{Database, NamedDatabase}
 
 
 /**
