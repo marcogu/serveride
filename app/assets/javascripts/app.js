@@ -64,6 +64,23 @@ app.controller('SwiperToolController', ['$scope', '$element', '$http', '$modal',
 		//element:angular.element([e])
 	};
 
+	//$scope.urlformat = function(action, data) {
+	//	switch(action) {
+	//		case "wk": return "/wkey/" + data[0] + "/" + data[1] + "/" + data[2] + "/" + data[3];
+	//			break;
+	//		case "mc": return "/mac/" + data[0] + "/" + data [1];
+	//			break;
+	//		case "3d":
+	//			break;
+	//		case "d3d":
+	//			break;
+	//		case "ci":
+	//			break;
+	//		case "tk":
+	//			break;
+	//	}
+	//};
+
 	$scope.commitWk = function(deal) {
 		let url = `/wkey/${deal.random}/${deal.translog}/${deal.ksn}/${deal.mk}`;
 		var alertTarget = event.target.parentElement;
@@ -154,6 +171,24 @@ app.controller('SwiperToolController', ['$scope', '$element', '$http', '$modal',
 	}
 }]);
 
-app.controller('SqltoolController', ['$scope', '$element', '$http', '$modal', function($scope, $element, $http, $modal){
+app.controller('SqltoolController', ['$scope', '$element', '$http', '$modal',
+	function($scope, $element, $http, $modal) {
 
+	$scope.sql = "SELECT A.AGTORG,A.TMERCID,A.TTERMID,D.NOD_ID,D.AGTORGCPUS,D.TPDU,D.TTMKKEY FROM STPNODMERKEYINF A" +
+			" LEFT JOIN OMNG_NODPARA D ON TRIM(A.AGTORG)=TRIM(D.AGTORG) AND A.ORG_ID = D.NOD_ID WHERE ROWNUM < 2";
+
+	$scope.divJsviewerQueryResultInit = function() {};
+
+	$scope.submitSQL = function(asg) {
+
+		var container = document.getElementById('divJsviewerQueryResult');
+		//console.log(container.lastChild);
+		while(container.hasChildNodes())
+			container.removeChild(container.lastChild);
+
+		$http.post("/sql", {sql:$scope.sql}).success(function(data,state, header){
+			var ele = renderjson(data);
+			container.appendChild(ele);
+		})
+	};
 }]);

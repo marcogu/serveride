@@ -3,6 +3,8 @@ package services.mpos
 import play.api.db.Database
 
 
+case class SQL(sql:String)
+
 class QuerySession(db:Database) {
   lazy val conn = db.getConnection()
   def finish() = conn.close()

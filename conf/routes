@@ -13,6 +13,7 @@ GET		/mac/:wk/:data				controllers.SwiperToolCtrler.macCacWith(wk,data)
 GET		/3des/:key/:data			controllers.SwiperToolCtrler.des3(key,data)
 GET     /derypt3des/:key/:data      controllers.SwiperToolCtrler.d3des(key, data)
 POST    /mockserivce/:macModel      controllers.SwiperToolCtrler.cqjrMockDeal(macModel)
+POST    /sql                        controllers.DBController.query
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /AngularJsFramework/app/*file   controllers.Assets.at(path="/public/app", file)

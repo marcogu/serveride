@@ -2,6 +2,7 @@ package models
 
 import play.api.data.Form
 import play.api.data.Forms._
+import services.mpos.SQL
 
 /**
   * Created by marco on 2017/1/11.
@@ -11,6 +12,12 @@ package object reqarg {
     mapping(
       "requestXml" -> text
     )(XMLPack.apply)(XMLPack.unapply)
+  )
+
+  val sqlForm = Form(
+    mapping(
+      "sql" -> text
+    )(SQL.apply)(SQL.unapply)
   )
 
   object MockMkQuery{
