@@ -1,0 +1,12 @@
+@import models.viewparam.MainTempateArguments
+@(implicit primaryTempConfig:MainTempateArguments)
+
+@views.html.maintempl{
+
+<div ng-app="CodeEditor" ng-controller="EditorController">
+    <div id="divEditorContainer">
+        <textarea id="txaEditor" ng-model="$parent.file" ng-init="loadDefaultCodeFile()"></textarea>
+    </div>
+</div>
+<script src="/assets/javascripts/editor/devapp.js" type="text/javascript"></script>
+}
