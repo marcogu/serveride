@@ -180,9 +180,7 @@ app.controller('SqltoolController', ['$scope', '$element', '$http', '$modal',
 	$scope.divJsviewerQueryResultInit = function() {};
 
 	$scope.submitSQL = function(asg) {
-
 		var container = document.getElementById('divJsviewerQueryResult');
-		//console.log(container.lastChild);
 		while(container.hasChildNodes())
 			container.removeChild(container.lastChild);
 
@@ -191,4 +189,24 @@ app.controller('SqltoolController', ['$scope', '$element', '$http', '$modal',
 			container.appendChild(ele);
 		})
 	};
+
+	$scope.querySpec = function(action, sql) {
+		var postBody = {sql:sql};
+		return $http.post(action, postBody).then(function(res){
+			console.log(res.data);
+			return res.data;
+		});
+	};
+
+	$scope.testQueryOnOracle = function(sql){
+		var secorcurl = encodeURIComponent("jdbc:oracle:thin:@172.16.16.13:1521:ORCL");
+		var orc = "/sql/" + secorcurl + "/BPMPOS/nK17kLnd/oracle.jdbc.driver.OracleDriver";
+		var result = $scope.querySpec(orc, sql);
+	};
+
+	$scope.testQueryOnPostgrate = function(sql){
+		var secpgurl = encodeURIComponent("jdbc:postgresql://127.0.0.1:5432/mydb");
+		var pg = "/sql/" + secpgurl + "/marco/emptypwd/org.postgresql.Driver";
+		var result = $scope.querySpec(pg, sql);
+	}
 }]);

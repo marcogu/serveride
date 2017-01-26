@@ -24,6 +24,7 @@ class DBController extends Controller{
   }
 
   def queryWithCfg(url:String, act:String, pwd:String, driver:String) = Action(parse.form(sqlForm)) { req=>
+    Logger.debug(s"url=$url act=$act pwd=$pwd driver=$driver\nquery=${req.body.sql}")
     Ok(Json.toJson(DBService(DbCfg(url = url, act = act, pwd = pwd, driver = driver)).query(req.body.sql)))
   }
 
