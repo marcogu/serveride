@@ -2,12 +2,14 @@ package models
 
 import play.api.data.Form
 import play.api.data.Forms._
-import services.mpos.SQL
 
 /**
   * Created by marco on 2017/1/11.
   */
 package object reqarg {
+
+  case class SQL(sql:String)
+
   val xmlForm = Form(
     mapping(
       "requestXml" -> text

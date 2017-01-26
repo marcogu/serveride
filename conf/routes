@@ -20,7 +20,9 @@ GET     /AngularJsFramework/app/*file   controllers.Assets.at(path="/public/app"
 GET     /assets/javascripts/*file       controllers.Assets.at(path="/public/javascripts", file)
 GET     /assets/stylesheets/*file       controllers.Assets.at(path="/public/stylesheets", file)
 GET     /assets/images/*file            controllers.Assets.at(path="/public/images", file)
+GET     /assets/lib/*file               controllers.Assets.at(path="/public/lib", file)
 
-GET     /scode                      controllers.Application.defaultSouceCode
-
-    
+GET     /editor                     controllers.EditorController.editorView
+GET     /scode/all                  controllers.EditorController.sourceCodeWithExtension(ext=null)
+GET     /scode/:extension           controllers.EditorController.sourceCodeWithExtension(extension)
+GET     /scode/load/:path           controllers.EditorController.laodSourceCode(path)

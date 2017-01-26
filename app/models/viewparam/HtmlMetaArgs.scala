@@ -42,7 +42,6 @@ object MainTempateArguments {
 
     val defaultArg = new MainTempateArguments(title="Oem Pkg Manager", cssUrl=
       Some(scala.collection.Seq("/assets/stylesheets/app-style.css", "/assets/stylesheets/angular-motion-0.4.4.css")
-//        Some(scala.collection.Seq("/assets/stylesheets/lib.min.css","/assets/stylesheets/docs.min.css","/assets/stylesheets/app-style.css", "/assets/stylesheets/angular-motion-0.4.4.css")
       ),
       jsUrl =
       Some(scala.collection.Seq(
@@ -58,7 +57,7 @@ object MainTempateArguments {
     defaultArg.addMeta(("charset", "UTF-8"))
       .addMeta(("name", "viewport"), ("content", "width=device-width, initial-scale=1"))
       .addMeta(("http-equiv", "X-UA-Compatible"), ("content", "IE=edge"))
-      .addMeta(("name", "description"), ("content", "瀚银科技"))
+      .addMeta(("name", "description"), ("content", "合利宝"))
       .addMeta(("name", "author"), ("content", "顾颖炯"))
 //    defaultArg.baseHref = Some("/")
     defaultArg
