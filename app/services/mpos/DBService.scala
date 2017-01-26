@@ -28,6 +28,7 @@ case class DbCfg(url:String, act:String, pwd:String, driver:String){
     config.setJdbcUrl(url)
     config.setUsername(act)
     config.setPassword(pwd)
+    config.setDriverClassName(driver)
     config
   }
 }
@@ -37,7 +38,7 @@ object DbCfg{
   driver = "oracle.jdbc.driver.OracleDriver", act="BPMPOS", pwd = "nK17kLnd")
 }
 
-class DBService(cfg:DbCfg){
+class DBService(val cfg:DbCfg){
   lazy val hikariDs:HikariDataSource = new HikariDataSource(cfg.hkldsProperites)
   def genQuerySession = new QuerySession(hikariDs.getConnection)
 
@@ -66,4 +67,6 @@ object DBService  {
     dbsPool.foreach{ enity => if(!enity._2.hikariDs.isClosed) enity._2.hikariDs.close()}
     dbsPool.clear()
   }
+
+  def alldsCfg[T](format:(DbCfg)=>T):Iterator[T] = dbsPool.iterator.map( entry => format(entry._2.cfg))
 }

@@ -13,7 +13,13 @@ GET		/mac/:wk/:data				controllers.SwiperToolCtrler.macCacWith(wk,data)
 GET		/3des/:key/:data			controllers.SwiperToolCtrler.des3(key,data)
 GET     /derypt3des/:key/:data      controllers.SwiperToolCtrler.d3des(key, data)
 POST    /mockserivce/:macModel      controllers.SwiperToolCtrler.cqjrMockDeal(macModel)
+
 POST    /sql                        controllers.DBController.query
+POST    /sql/:u/:a                  controllers.DBController.queryWithCfg(u,a,pwd=null,driver=null)
+POST    /sql/:u/:a/emptypwd/:d      controllers.DBController.queryWithCfg(u,a,pwd=null,d)
+POST    /sql/:u/:a/:p/:d            controllers.DBController.queryWithCfg(u,a,p,d)
+GET     /ds/clear                   controllers.DBController.clearalldb()
+GET     /allds                      controllers.DBController.listds
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /AngularJsFramework/app/*file   controllers.Assets.at(path="/public/app", file)

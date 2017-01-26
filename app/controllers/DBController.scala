@@ -12,8 +12,22 @@ import play.api.libs.json.Json
   */
 class DBController extends Controller{
 
+  @deprecated("This is a test function, use query(driver) instead")
   def query() = Action(parse.form(sqlForm)) { req =>
     Logger.debug(req.body.sql)
     Ok(Json.toJson(DBService(DbCfg.default()).query(req.body.sql)))
+  }
+
+  def clearalldb() = Action {
+    DBService.cleanall()
+    Ok(Json.toJson("complete"))
+  }
+
+  def queryWithCfg(url:String, act:String, pwd:String, driver:String) = Action(parse.form(sqlForm)) { req=>
+    Ok(Json.toJson(DBService(DbCfg(url = url, act = act, pwd = pwd, driver = driver)).query(req.body.sql)))
+  }
+
+  def listds() = Action {
+    Ok(Json.toJson(DBService.alldsCfg(cfg => Map(cfg.act->cfg.url)).toArray))
   }
 }
