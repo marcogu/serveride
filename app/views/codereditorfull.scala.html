@@ -6,11 +6,16 @@
 
 <div ng-app="CodeEditor" ng-controller="EditorController" ng-init="loadDefaultCodeFile()">
 	<form class="form-inline" role="form">
-	  <div class="form-group">
-	    <label><i class="fa fa-globe"></i> State</label>
-	    <input type="text" class="form-control" ng-model="selectedState" data-min-length="0" 
-	    bs-options="scode[0] for scode in popupScodeFiles" placeholder="Enter state" bs-typeahead>
-	  </div>
+		<div class="form-group">
+	    	<label><i class="fa fa-globe"></i> State</label>
+	    	<input type="text" class="form-control" ng-model="selectedScode" data-min-length="0" 
+	    		bs-options="scode[0] for scode in popupScodeFiles" placeholder="Enter state" bs-typeahead>
+	  	</div>
+
+		<div class="form-group">
+			<!-- <label><i></i></label>	 -->
+			<button type="button" class="btn btn-primary" ng-click="loadSouceCode()">load</button>
+		</div>
 	  <hr>
 	</form>
 </div>
