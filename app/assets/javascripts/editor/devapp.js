@@ -18,6 +18,8 @@ app.filter('to_trusted', ['$sce', function ($sce) {
 app.controller('EditorController', function ($scope,$http) {
     $scope.popupScodeFiles = [];
     $scope.selectedScode = {};
+    $scope.editingContent = "";
+
     $scope.loadDefaultCodeFile = function(){
         console.log("init");
         $http.get("/scode/all").success(function(data,state,header){
@@ -30,7 +32,8 @@ app.controller('EditorController', function ($scope,$http) {
         var encodedPath = encodeURIComponent($scope.selectedScode[1]);
         var requrl = "/scode/load/" + encodedPath;
         $http.get(requrl).success(function(data, state, header){
-            console.log(data);
+            $scope.editingContent = data;
+            console.log($scope.editingContent);
         });
     };
 });
