@@ -32,8 +32,14 @@ app.controller('EditorController', function ($scope,$http) {
         var encodedPath = encodeURIComponent($scope.selectedScode[1]);
         var requrl = "/scode/load/" + encodedPath;
         $http.get(requrl).success(function(data, state, header){
-            $scope.editingContent = data;
-            console.log($scope.editingContent);
+            var ele = document.getElementById("txaEditor");
+            ele.value = data
+            var editor = CodeMirror.fromTextArea(ele, {
+                lineNumbers: true,
+                matchBrackets: true,
+                // theme: "ambiance",
+                mode: "text/x-scala"
+            });
         });
     };
 });

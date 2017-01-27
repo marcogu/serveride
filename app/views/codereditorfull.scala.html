@@ -2,25 +2,21 @@
 @(implicit primaryTempConfig:MainTempateArguments)
 
 @views.html.maintempl{
-@*<script src="assets/lib/bootstrap/js/bootstrap.js"></script>*@
+<link type="text/css" href="/assets/javascripts/codemirro5-23-0/theme/ambiance.css" rel="stylesheet">
+<script type="text/javascript" src="/assets/javascripts/codemirro5-23-0/mode/clike/clike.js"> </script>
 
 <div ng-app="CodeEditor" ng-controller="EditorController" ng-init="loadDefaultCodeFile()">
 	<form class="form-inline" role="form">
 		<div class="form-group">
-	    	<label><i class="fa fa-globe"></i> State</label>
 	    	<input type="text" class="form-control" ng-model="selectedScode" data-min-length="0" 
-	    		bs-options="scode[0] for scode in popupScodeFiles" placeholder="Enter state" bs-typeahead>
+	    		bs-options="scode[0] for scode in popupScodeFiles" placeholder="查找源码" bs-typeahead>
+    		<button type="button" class="btn btn-primary" ng-click="loadSouceCode()">load</button>		
 	  	</div>
-
-		<div class="form-group">
-			<!-- <label><i></i></label>	 -->
-			<button type="button" class="btn btn-primary" ng-click="loadSouceCode()">load</button>
-		</div>
 	  	<hr>
-
-	  	<div>
-        	<textarea id="txaEditor" ng-model="$parent.editingContent" ></textarea>
-    	</div>
 	</form>
+
+	<div>
+    	<textarea id="txaEditor" ></textarea>
+    </div>
 </div>
 }
