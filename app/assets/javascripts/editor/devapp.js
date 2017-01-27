@@ -37,6 +37,8 @@ app.controller('EditorController', function ($scope,$http) {
             var editor = CodeMirror.fromTextArea(ele, {
                 lineNumbers: true,
                 matchBrackets: true,
+                height:'800px',
+                // width:'100%',
                 // theme: "ambiance",
                 mode: "text/x-scala"
             });

@@ -2,7 +2,6 @@
 @(implicit primaryTempConfig:MainTempateArguments)
 
 @views.html.maintempl{
-<link type="text/css" href="/assets/javascripts/codemirro5-23-0/theme/ambiance.css" rel="stylesheet">
 <script type="text/javascript" src="/assets/javascripts/codemirro5-23-0/mode/clike/clike.js"> </script>
 
 <div ng-app="CodeEditor" ng-controller="EditorController" ng-init="loadDefaultCodeFile()">
@@ -16,7 +15,7 @@
 	</form>
 
 	<div>
-    	<textarea id="txaEditor" ></textarea>
+    	<textarea id="txaEditor" ></textarea> <!-- Rows="70" Cols="200" -->
     </div>
 </div>
 }
