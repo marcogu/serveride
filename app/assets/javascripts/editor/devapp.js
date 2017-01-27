@@ -15,31 +15,14 @@ app.filter('to_trusted', ['$sce', function ($sce) {
 
 'use strict';
 
-app.controller('EditorController', function ($scope,$http, $dropdown) {
-
-    $scope.dropdown = [];
-
+app.controller('EditorController', function ($scope,$http) {
+    $scope.popupScodeFiles = [];
     $scope.loadDefaultCodeFile = function(){
         console.log("init");
+        $http.get("/scode/all").success(function(data,state,header){
+            $scope.popupScodeFiles = Object.entries(data);             
+        }).error(function(err){
+            console.log(err);
+        });
     };
-
-    $scope.getallsoucecodefiles = function() {
-        //console.log($scope.dropdown);
-        var t = angular.element(document.getElementById("dpFiles"));
-        //var t = document.getElementById("dpFiles");
-        var dropd = $dropdown(t, {title:"hello", content:"aaaa"});
-
-        //$http.get("/scode/all").success(function(data,state,header){
-        //    var ary = Object.entries(data);
-        //    var dropdowndata = [];
-        //
-        //    for(item in ary) {
-        //        dropdowndata.push({text:item[0], ctxdata:item[1]});
-        //    }
-        //
-        //
-        //});
-    };
-    //console.log(document.getElementById("dpFiles"));
-    $scope.getallsoucecodefiles();
 });
