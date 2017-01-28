@@ -2,7 +2,13 @@
 @(implicit primaryTempConfig:MainTempateArguments)
 
 @views.html.maintempl{
-<script type="text/javascript" src="/assets/javascripts/codemirro5-23-0/mode/clike/clike.js"> </script>
+<!-- editor panel themes -->
+<link type="text/css" href="/assets/javascripts/codemirro5-23-0/codemirror.css" rel="stylesheet">
+<!-- editor syntax heilight components -->
+<script type="text/javascript" src="/assets/javascripts/codemirro5-23-0/mode/clike/clike.js"></script>
+<script type="text/javascript" src="/assets/javascripts/codemirro5-23-0/mode/coffeescript/coffeescript.js"></script>
+<script type="text/javascript" src="/assets/javascripts/codemirro5-23-0/mode/css/css.js"></script>
+<script type="text/javascript" src="/assets/javascripts/codemirro5-23-0/mode/htmlmixed/htmlmixed.js"></script>
 
 <div ng-app="CodeEditor" ng-controller="EditorController" ng-init="loadDefaultCodeFile()">
 	<form class="form-inline" role="form">
@@ -14,8 +20,19 @@
 	  	<hr>
 	</form>
 
-	<div>
-    	<textarea id="txaEditor" ></textarea> <!-- Rows="70" Cols="200" -->
-    </div>
+	<div class="panel panel-default" style="height: 500px; width: 80%;">
+		<div class="panel-heading">
+			<h3 class="panel-title">代码编辑器
+		</div>
+		<div class="panel-body" style="background: red; height: 100%; width: 100%;" >
+			<style type="text/css">
+				.CodeMirror {
+					border: 1px solid #eee;
+					height: 100%;
+				}
+			</style>
+	    	<textarea id="txaEditor" ></textarea> <!-- Rows="70" Cols="200" -->
+	    </div>
+	</div>
 </div>
 }
