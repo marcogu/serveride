@@ -20,6 +20,8 @@ app.controller('EditorController', function ($scope,$http) {
     $scope.selectedScode = {};
     $scope.editingContent = "";
 
+    $scope.cmtype = "text/x-scala";
+
     $scope.loadDefaultCodeFile = function(){
         console.log("init");
         $http.get("/scode/all").success(function(data,state,header){
@@ -28,6 +30,13 @@ app.controller('EditorController', function ($scope,$http) {
             console.log(err);
         });
     };
+    //test action -----
+    $scope.testAction = function() {
+        var txaEle = document.getElementById("txaEditor");
+        console.log(txaEle.dataset.cmtype);
+    };
+    // -----------------
+
     $scope.loadSouceCode = function(){
         var encodedPath = encodeURIComponent($scope.selectedScode[1]);
         var requrl = "/scode/load/" + encodedPath;
