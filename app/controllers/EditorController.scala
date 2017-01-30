@@ -61,7 +61,8 @@ class EditorController @Inject() (env:Environment) extends Controller{
       varg.addMeta("charset"->"UTF-8").asInstanceOf[MainTempateArguments]
     }
 
-    lazy val souceCodeContent = projser.souceCodeContent(filePath.path)
+    lazy val content:String = if(filePath != null && filePath.path.nonEmpty)
+      projser.souceCodeContent(filePath.path) else ""
   }
 
   def editorView(path:String = null) = {
@@ -69,7 +70,7 @@ class EditorController @Inject() (env:Environment) extends Controller{
       case null | "" =>  CodeMirrorModeInfo(Path(""))
       case other => CodeMirrorModeInfo(Path(URLDecoder.decode(path, "UTF-8")))
     }  
-    Action(Ok(views.html.codereditorfull(pageInfo.mainarg, pageInfo.cmtype, souceCodeContent, path)))
+    Action(Ok(views.html.codereditorfull(pageInfo.mainarg, pageInfo.cmtype, pageInfo.content, path)))
   }
 
   def laodSourceCode(urlEncodedPath:String) =

@@ -29,11 +29,21 @@ app.controller('EditorController', function ($scope,$http) {
         }).error(function(err){
             console.log(err);
         });
+
+        $scope.testAction();
     };
     //test action -----
     $scope.testAction = function() {
         var txaEle = document.getElementById("txaEditor");
-        console.log(txaEle.dataset.cmtype);
+        console.log(txaEle.dataset.mpath);
+
+        if(txaEle.dataset.mpath != null && txaEle.dataset.mpath.length > 0){
+            var editor = CodeMirror.fromTextArea(txaEle, {
+                lineNumbers: true,
+                matchBrackets: true,
+                mode: txaEle.dataset.cmtype
+            });
+        }
     };
     // -----------------
 
