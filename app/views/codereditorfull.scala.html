@@ -2,31 +2,32 @@
 @(implicit primaryTempConfig:MainTempateArguments, cmtype:String, fileContent:String, fullPath:String)
 
 @views.html.maintempl{
-<!-- editor panel themes -->
-<link type="text/css" href="/assets/javascripts/codemirro5-23-0/codemirror.css" rel="stylesheet">
 
 <div ng-app="CodeEditor" ng-controller="EditorController" ng-init="loadDefaultCodeFile()">
+
+	@*<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">*@
+
+	@*</div>*@
+
+
 	<form class="form-inline" role="form">
 		<div class="form-group">
 	    	<input type="text" class="form-control" ng-model="selectedScode" data-min-length="0" 
-	    		bs-options="scode[0] for scode in popupScodeFiles" placeholder="查找源码" bs-typeahead>
-    		<button type="button" class="btn btn-primary" ng-click="testAction()">load</button>		
+	    		bs-options="scode[0] for scode in popupScodeFiles"
+				placeholder="查找源码" bs-typeahead>
+    		<button type="button" class="btn btn-primary" ng-click="reload()">load</button>
 	  	</div>
-	  	<hr>
 	</form>
 
-	<div class="panel panel-default" style="height: 500px; width: 80%;">
-		<div class="panel-heading">
-			<h3 class="panel-title">代码编辑器</h3>
-		</div>
-		<div class="panel-body" style="background: red; height: 100%; width: 100%;" >
+	<div> <!-- style="height: 500px; width: 80%;" -->
+		<div id="divEditorContainer" style="height: 100%; width: 100%;" > <!-- class="panel-body"  -->
 			<style type="text/css">
 				.CodeMirror {
 					border: 1px solid #eee;
 					height: 100%;
 				}
 			</style>
-	    	<textarea id="txaEditor" data-cmtype="@cmtype" data-mpath="@fullPath">
+	    	<textarea id="txaEditor" style="display: none;" data-cmtype="@cmtype" data-mpath="@fullPath">
 				@fileContent
 			</textarea>
 	    </div>

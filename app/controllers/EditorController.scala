@@ -22,7 +22,7 @@ class EditorController @Inject() (env:Environment) extends Controller{
   case class CodeMirrorModeInfo(filePath:Path){
     import collection.mutable.{Seq=>MSeq}
     private val cssurls:MSeq[String] = MSeq("/assets/javascripts/codemirro5-23-0/codemirror.css",
-      "/assets/stylesheets/app-style.css")
+      "/assets/lib/bootstrap/css/bootstrap.min.css")
     private var jsurls = MSeq(
       "/assets/javascripts/angular-1.4.4/angular.min.js",
       "/assets/javascripts/angular-1.4.4/angular-route.min.js",
@@ -41,8 +41,10 @@ class EditorController @Inject() (env:Environment) extends Controller{
         "text/x-scala"
       case "java" => jsurls ++= Seq(jsUrlFormat.format("clike", "clike"))
         "text/x-java"
-      case "html" => jsurls ++= Seq(jsUrlFormat.format("htmlmixed", "htmlmixed"))
-        jsurls ++= Seq(jsUrlFormat.format("htmlembedded", "htmlembedded"))
+      case "html" => jsurls ++= Seq(jsUrlFormat.format("htmlmixed", "htmlmixed"),
+        jsUrlFormat.format("htmlembedded", "htmlembedded"),
+        "/assets/javascripts/codemirro5-23-0/addon/mode/multiplex.js",
+        jsUrlFormat.format("xml", "xml"))
         "application/x-ejs"
       case "js" => jsurls ++= Seq(jsUrlFormat.format("javascript", "javascript"))
         "text/javascript"

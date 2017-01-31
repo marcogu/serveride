@@ -15,9 +15,9 @@ app.filter('to_trusted', ['$sce', function ($sce) {
 
 'use strict';
 
-app.controller('EditorController', function ($scope,$http) {
+app.controller('EditorController', function ($scope,$http, $location) {
     $scope.popupScodeFiles = [];
-    $scope.selectedScode = {};
+    $scope.selectedScode = null;
     $scope.editingContent = "";
 
     $scope.cmtype = "text/x-scala";
@@ -30,10 +30,10 @@ app.controller('EditorController', function ($scope,$http) {
             console.log(err);
         });
 
-        $scope.testAction();
+        $scope.codemirroApply();
     };
     //test action -----
-    $scope.testAction = function() {
+    $scope.codemirroApply = function() {
         var txaEle = document.getElementById("txaEditor");
         console.log(txaEle.dataset.mpath);
 
@@ -45,19 +45,10 @@ app.controller('EditorController', function ($scope,$http) {
             });
         }
     };
-    // -----------------
-
-    $scope.loadSouceCode = function(){
+    $scope.reload = function(){
+        if($scope.selectedScode == null) return;
         var encodedPath = encodeURIComponent($scope.selectedScode[1]);
-        var requrl = "/scode/load/" + encodedPath;
-        $http.get(requrl).success(function(data, state, header){
-            var ele = document.getElementById("txaEditor");
-            ele.value = data
-            var editor = CodeMirror.fromTextArea(ele, {
-                lineNumbers: true,
-                matchBrackets: true,
-                mode: "text/x-scala"
-            });
-        });
+        //$location.path("/editor/"+encodedPath);
+        window.open("/editor/"+encodedPath);
     };
 });
