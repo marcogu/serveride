@@ -1,29 +1,36 @@
 @import models.viewparam.MainTempateArguments
-@(implicit primaryTempConfig:MainTempateArguments, cmtype:String, fileContent:String, fullPath:String)
+@(implicit primaryTempConfig:MainTempateArguments,
+		cmtype:String,
+		fileContent:String,
+		fullPath:String,
+		fname:String = "")
 
 @views.html.maintempl{
 
 <div ng-app="CodeEditor" ng-controller="EditorController" ng-init="loadDefaultCodeFile()">
 
-	@*<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">*@
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Edit @fname</a>
+			</div>
 
-	@*</div>*@
+			<form class="navbar-form navbar-right" role="form">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="selectedScode" data-min-length="0"
+					bs-options="scode[0] for scode in popupScodeFiles"
+					placeholder="查找源码" bs-typeahead>
+					<button type="button" class="btn btn-primary" ng-click="reload()">load</button>
+					<button type="button" class="btn btn-success" ng-click="save()">save</button>
+				</div>
+			</form>
+		</div>
+	</div>
 
-
-	<form class="form-inline" role="form">
-		<div class="form-group">
-	    	<input type="text" class="form-control" ng-model="selectedScode" data-min-length="0" 
-	    		bs-options="scode[0] for scode in popupScodeFiles"
-				placeholder="查找源码" bs-typeahead>
-    		<button type="button" class="btn btn-primary" ng-click="reload()">load</button>
-	  	</div>
-	</form>
-
-	<div> <!-- style="height: 500px; width: 80%;" -->
+	<div style="padding-top: 50px;"> <!-- style="height: 500px; width: 80%;" -->
 		<div id="divEditorContainer" style="height: 100%; width: 100%;" > <!-- class="panel-body"  -->
 			<style type="text/css">
 				.CodeMirror {
-					border: 1px solid #eee;
 					height: 100%;
 				}
 			</style>

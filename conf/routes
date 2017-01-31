@@ -30,6 +30,7 @@ GET     /assets/lib/*file               controllers.Assets.at(path="/public/lib"
 
 GET     /editor                     controllers.EditorController.editorView(path=null)
 GET		/editor/:path 				controllers.EditorController.editorView(path)
+POST    /editor/:path/save          controllers.EditorController.save(path)
 GET     /scode/all                  controllers.EditorController.sourceCodeWithExtension(ext=null)
 GET     /scode/:extension           controllers.EditorController.sourceCodeWithExtension(extension)
 GET     /scode/load/:path           controllers.EditorController.laodSourceCode(path)

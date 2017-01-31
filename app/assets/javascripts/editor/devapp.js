@@ -41,6 +41,7 @@ app.controller('EditorController', function ($scope,$http, $location) {
             var editor = CodeMirror.fromTextArea(txaEle, {
                 lineNumbers: true,
                 matchBrackets: true,
+                theme: "ambiance",
                 mode: txaEle.dataset.cmtype
             });
         }
@@ -50,5 +51,8 @@ app.controller('EditorController', function ($scope,$http, $location) {
         var encodedPath = encodeURIComponent($scope.selectedScode[1]);
         //$location.path("/editor/"+encodedPath);
         window.open("/editor/"+encodedPath);
+    };
+    $scope.save = function(){
+        console.log("do save---");
     };
 });
