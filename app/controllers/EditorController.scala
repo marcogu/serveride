@@ -4,6 +4,7 @@ import java.net.URLDecoder
 import javax.inject.Inject
 
 import models.viewparam.MainTempateArguments
+import play.api.db.Database
 import play.api.libs.json.Json
 import play.api.{Logger, Environment}
 import play.api.mvc.Controller
@@ -15,7 +16,7 @@ import scala.reflect.io.Path
 /**
   * Created by marco on 2017/1/25.
   */
-class EditorController @Inject() (env:Environment) extends Controller{
+class EditorController @Inject() (env:Environment, h2defdb:Database) extends Controller{
 
   val projser = ServerEnv(env)
 
@@ -90,5 +91,9 @@ class EditorController @Inject() (env:Environment) extends Controller{
   def save(path:String) = Action(parse.tolerantText){ implicit req =>
     Logger.debug(s"${req.body}")
     Ok("----")
+  }
+
+  def testdb = Action {
+    Ok(s"$h2defdb")
   }
 }
