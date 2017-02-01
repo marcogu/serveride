@@ -49,7 +49,8 @@ app.controller('EditorController', function ($scope,$http, $location) {
     $scope.reload = function(){
         if($scope.selectedScode == null) return;
         var encodedPath = encodeURIComponent($scope.selectedScode[1]);
-        window.open("/editor/"+encodedPath);
+        //window.open("/editor/"+encodedPath);
+        window.location.href = "/editor/" + encodedPath;
     };
 
     $scope.save = function(){

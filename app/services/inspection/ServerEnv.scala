@@ -8,10 +8,8 @@ import scala.reflect.io.Path
   * Created by marco on 2017/1/24.
   *
   */
-// a test
-//  def defaultTest():String = souceCodeContent((srcroot / "controllers" / "Application.scala").path)
-class ServerEnv(env:Environment){
-  val srcroot = Path(env.rootPath.getAbsolutePath) / "app"
+class ServerEnv(rootPath:Path){
+  val srcroot = rootPath / "app"
 
   def souceCodeContent(path:String) = {
     val source = scala.io.Source.fromFile(path)
@@ -24,9 +22,5 @@ class ServerEnv(env:Environment){
 
 
 object ServerEnv {
-  var senv:Option[ServerEnv] = None
-  def apply(env:Environment):ServerEnv = senv match {
-    case Some(ins) => ins
-    case None => senv = Some(new ServerEnv(env)); senv.get
-  }
+  def apply(env:Environment):ServerEnv = new ServerEnv(env.rootPath.getAbsolutePath)
 }
