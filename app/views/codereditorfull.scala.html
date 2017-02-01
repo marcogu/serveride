@@ -15,13 +15,13 @@
 				<a class="navbar-brand" href="#">Edit @fname</a>
 			</div>
 
-			<form class="navbar-form navbar-right" role="form">
+			<form class="navbar-form navbar-right" role="search">
 				<div class="form-group">
 					<input type="text" class="form-control" ng-model="selectedScode" data-min-length="0"
-					bs-options="scode[0] for scode in popupScodeFiles"
+					bs-options="scode[0] for scode in popupScodeFiles" style="outline:none;"
 					placeholder="查找源码" bs-typeahead>
-					<button type="button" class="btn btn-primary" ng-click="reload()">load</button>
-					<button type="button" class="btn btn-success" ng-click="save()">save</button>
+					<button type="button" class="btn btn-primary" style="outline:none" ng-click="reload()">load</button>
+					<button type="button" class="btn btn-success" style="outline:none" ng-click="save()">save</button>
 				</div>
 			</form>
 		</div>

@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 import models.viewparam.MainTempateArguments
 import play.api.libs.json.Json
-import play.api.Environment
+import play.api.{Logger, Environment}
 import play.api.mvc.Controller
 import services.inspection.ServerEnv
 import play.api.mvc._
@@ -87,7 +87,8 @@ class EditorController @Inject() (env:Environment) extends Controller{
     Action(Ok(Json.toJson(mapResult)))
   }
 
-  def save(path:String) = Action{
+  def save(path:String) = Action(parse.tolerantText){ implicit req =>
+    Logger.debug(s"${req.body}")
     Ok("----")
   }
 }
