@@ -20,6 +20,8 @@ class QuerySession(conn:Connection) {
     while(rs.next()) { out.append(Map(head.map { e => e -> rs.getString(e) }:_*)) }
     out
   }
+
+  def exc(sql:String) = conn.createStatement().execute(sql)
 }
 
 case class DbCfg(url:String, act:String, pwd:String, driver:String){

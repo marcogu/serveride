@@ -31,4 +31,17 @@ class DBController extends Controller{
   def listds() = Action {
     Ok(Json.toJson(DBService.alldsCfg(cfg => Map(cfg.act->cfg.url)).toArray))
   }
+
+  // test did passed
+  def embededH2() = Action {
+    val dbservice = DBService(DbCfg(url = "jdbc:h2:./public/toolappdef.db", act = "marco", pwd = "123456",
+      driver = "org.h2.Driver"))
+    val session = dbservice.genQuerySession
+    session.exc("CREATE TABLE project ( pn VARCHAR(128), purl VARCHAR(1024) )")
+    session.exc("INSERT INTO project VALUES ('crjqMobileDevServer', " +
+      "'/Users/marco/Documents/workspace/jvm/scala/CrjqSwiperMockServer')")
+    val info = session.query("SELECT * FROM project")
+    session.finish()
+    Ok(Json.toJson(info))
+  }
 }

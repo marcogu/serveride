@@ -35,5 +35,5 @@ GET     /scode/all                  controllers.EditorController.sourceCodeWithE
 GET     /scode/:extension           controllers.EditorController.sourceCodeWithExtension(extension)
 GET     /scode/load/:path           controllers.EditorController.laodSourceCode(path)
 
-
-GET     /tdb2                       controllers.EditorController.testdb
+# for test
+GET     /tdb2                       controllers.DBController.embededH2

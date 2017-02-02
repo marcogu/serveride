@@ -47,9 +47,9 @@ class ApplicationSpec extends Specification {
       val fakeRequest = FakeRequest(POST, "/test", FakeHeaders(), body=fakeRequestXmlBody)
 
 
-      val testAction = new Application().testAction.apply(fakeRequest)
-      status(testAction) must equalTo(OK)
-      contentAsString(testAction) must contain ("Hello play")
+//      val testAction = new Application().testAction.apply(fakeRequest)
+//      status(testAction) must equalTo(OK)
+//      contentAsString(testAction) must contain ("Hello play")
     }
   }
 

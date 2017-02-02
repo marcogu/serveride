@@ -4,19 +4,20 @@ import java.net.URLDecoder
 import javax.inject.Inject
 
 import models.viewparam.MainTempateArguments
-import play.api.db.Database
 import play.api.libs.json.Json
 import play.api.{Logger, Environment}
 import play.api.mvc.Controller
 import services.inspection.ServerEnv
 import play.api.mvc._
+import services.mpos.DBService
 import scala.reflect.io.Path
 
 
 /**
   * Created by marco on 2017/1/25.
   */
-class EditorController @Inject() (env:Environment, h2defdb:Database) extends Controller{
+// , h2defdb:Database // import play.api.db.Database
+class EditorController @Inject() (env:Environment) extends Controller{
 
   val projser = ServerEnv(env)
 
@@ -94,6 +95,8 @@ class EditorController @Inject() (env:Environment, h2defdb:Database) extends Con
   }
 
   def testdb = Action {
-    Ok(s"$h2defdb")
+    DBService
+//    Ok(s"$h2defdb")
+    Ok("updateed")
   }
 }
