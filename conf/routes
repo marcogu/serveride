@@ -31,8 +31,9 @@ GET     /assets/lib/*file               controllers.Assets.at(path="/public/lib"
 GET     /editor                     controllers.EditorController.editorView(path=null)
 GET		/editor/:path 				controllers.EditorController.editorView(path)
 POST    /editor/save/:path          controllers.EditorController.save(path)
-GET     /scode/all                  controllers.EditorController.sourceCodeWithExtension(ext=null)
-GET     /scode/:extension           controllers.EditorController.sourceCodeWithExtension(extension)
+GET		/scode/all 					controllers.EditorController.srcFiles(p="self", e=null)
+GET		/scode/:p/:e 				controllers.EditorController.srcFiles(p:String, e:String)
+GET		/scode/new/:n/:url 			controllers.EditorController.registerProj(n:String, url:String)
 
 # for test
 GET     /tdb2                       controllers.DBController.embededH2

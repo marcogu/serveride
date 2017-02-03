@@ -5,6 +5,7 @@ import play.Logger
 import play.api.mvc._
 import play.api.mvc.Controller
 import services.mpos.{DbCfg, DBService}
+import services.Project
 import play.api.libs.json.Json
 
 /**
@@ -34,14 +35,6 @@ class DBController extends Controller{
 
   // test did passed
   def embededH2() = Action {
-    val dbservice = DBService(DbCfg(url = "jdbc:h2:./public/toolappdef.db", act = "marco", pwd = "123456",
-      driver = "org.h2.Driver"))
-    val session = dbservice.genQuerySession
-    session.exc("CREATE TABLE project ( pn VARCHAR(128), purl VARCHAR(1024) )")
-    session.exc("INSERT INTO project VALUES ('crjqMobileDevServer', " +
-      "'/Users/marco/Documents/workspace/jvm/scala/CrjqSwiperMockServer')")
-    val info = session.query("SELECT * FROM project")
-    session.finish()
-    Ok(Json.toJson(info))
+    Ok(Project.named(Project.selfName).path)
   }
 }

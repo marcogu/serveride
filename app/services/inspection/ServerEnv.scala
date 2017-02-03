@@ -11,8 +11,16 @@ import scala.reflect.io.Path
   */
 class ServerEnv(rootPath:Path){
   val srcroot = rootPath / "app"
+  def rootSubnames = srcroot.toFile.jfile.listFiles().map( f => f.getName).toSeq
+  def sourceWithExention(extension:String) = srcroot.walk.filter( p => p.extension.equals(extension) && p.isFile).toList
+}
 
-  def souceCodeContent(path:String):String = {
+
+object ServerEnv {
+  def apply(env:Environment):ServerEnv = new ServerEnv(env.rootPath.getAbsolutePath)
+  def apply(pPath:String):ServerEnv = new ServerEnv(Path(pPath))
+
+  def srcContent(path:String):String = {
     var source:BufferedSource = null
     try{
       source = scala.io.Source.fromFile(path)
@@ -23,12 +31,4 @@ class ServerEnv(rootPath:Path){
       if (source != null) try source.close()
     }
   }
-
-  def rootSubnames = srcroot.toFile.jfile.listFiles().map( f => f.getName).toSeq
-  def sourceWithExention(extension:String) = srcroot.walk.filter( p => p.extension.equals(extension) && p.isFile).toList
-}
-
-
-object ServerEnv {
-  def apply(env:Environment):ServerEnv = new ServerEnv(env.rootPath.getAbsolutePath)
 }
