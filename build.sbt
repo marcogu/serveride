@@ -2,9 +2,11 @@ name := "CrjqSwiperMockServer"
 
 version := "1.0"
 
+scalaVersion := "2.11.8"
+
 lazy val `crjqswipermockserver` = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.8"
+PlayKeys.devSettings := Seq("play.server.http.port" -> "9527")
 
 libraryDependencies ++= Seq( jdbc , cache , ws   , specs2 % Test,
   "org.postgresql" % "postgresql" % "9.4.1211",
