@@ -55,8 +55,8 @@ object MainTempateArguments {
       )))
 
     defaultArg.addMeta(("charset", "UTF-8"))
-      .addMeta(("name", "viewport"), ("content", "width=device-width, initial-scale=1"))
-      .addMeta(("http-equiv", "X-UA-Compatible"), ("content", "IE=edge"))
+      // .addMeta(("name", "viewport"), ("content", "width=device-width, initial-scale=1"))
+      // .addMeta(("http-equiv", "X-UA-Compatible"), ("content", "IE=edge"))
       .addMeta(("name", "description"), ("content", "合利宝"))
       .addMeta(("name", "author"), ("content", "顾颖炯"))
 //    defaultArg.baseHref = Some("/")

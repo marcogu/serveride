@@ -15,7 +15,7 @@ app.filter('to_trusted', ['$sce', function ($sce) {
 
 'use strict';
 
-app.controller('EditorController', function ($scope,$http, $location) {
+app.controller('EditorController', function ($scope,$http, $location, $modal) {
     $scope.popupScodeFiles = [];
     $scope.selectedScode = null;
 
@@ -60,5 +60,10 @@ app.controller('EditorController', function ($scope,$http, $location) {
         $http.post(postUrl, content).success(function(data, state, header){
             console.log("save got response:" + data);
         });
+    };
+
+    // var myOtherModal = $modal({scope: $scope, template: "view/siwpertestcase", show: false});
+    $scope.showModel = function(){ //"/view/siwpertestcase"
+        // myOtherModal.$promise.then(myOtherModal.show);
     };
 });
