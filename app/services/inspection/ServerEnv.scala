@@ -1,7 +1,8 @@
 package services.inspection
 
 
-import play.api.{Logger, Environment}
+import play.api.Environment
+import scala.io.BufferedSource
 import scala.reflect.io.Path
 
 /**
@@ -11,9 +12,16 @@ import scala.reflect.io.Path
 class ServerEnv(rootPath:Path){
   val srcroot = rootPath / "app"
 
-  def souceCodeContent(path:String) = {
-    val source = scala.io.Source.fromFile(path)
-    try source.mkString finally source.close()
+  def souceCodeContent(path:String):String = {
+    var source:BufferedSource = null
+    try{
+      source = scala.io.Source.fromFile(path)
+      source.mkString
+    }  catch {
+      case e:Exception => ""
+    } finally {
+      if (source != null) try source.close()
+    }
   }
 
   def rootSubnames = srcroot.toFile.jfile.listFiles().map( f => f.getName).toSeq
