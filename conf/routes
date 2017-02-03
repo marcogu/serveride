@@ -33,7 +33,6 @@ GET		/editor/:path 				controllers.EditorController.editorView(path)
 POST    /editor/save/:path          controllers.EditorController.save(path)
 GET     /scode/all                  controllers.EditorController.sourceCodeWithExtension(ext=null)
 GET     /scode/:extension           controllers.EditorController.sourceCodeWithExtension(extension)
-GET     /scode/load/:path           controllers.EditorController.laodSourceCode(path)
 
 # for test
 GET     /tdb2                       controllers.DBController.embededH2
