@@ -2,23 +2,28 @@ package controllers
 
 import java.net.URLDecoder
 import javax.inject.Inject
-
+import akka.actor.ActorSystem
+import models.Project
 import models.viewparam.CodeMirrorModeInfo
 import play.api.libs.json.Json
 import play.api.{Logger, Environment}
 import play.api.mvc.Controller
+import services.actor.ProjOnH2Actor
+import services.actor.ProjOnH2Actor.{NewProj, Files}
 import services.inspection.ServerEnv
-import services.Project
 import play.api.mvc._
 import scala.reflect.io.Path
+import akka.pattern.ask
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 
 /**
   * Created by marco on 2017/1/25.
   */
-class EditorController @Inject() (env:Environment) extends Controller{
-
-  val projser = ServerEnv(env)
+class EditorController @Inject() (env:Environment, system:ActorSystem) extends Controller{
+  val projActor = ProjOnH2Actor(system)
+  implicit val timeout: akka.util.Timeout = 5.seconds
 
   def editorView(path:String = null) = {
     val pageInfo = path match {
@@ -29,24 +34,12 @@ class EditorController @Inject() (env:Environment) extends Controller{
     Action(Ok(views.html.codereditorfull(pageInfo.mainarg, pageInfo.cmtype, ctt, path, pageInfo.filePath.name)))
   }
 
-  def projectFromName(n:String):Project = n match {
-    case null | "self" | "SELF" => Project.named(Project.selfName)
-    case other => Project.named(n)
+  def srcFiles(projName:String, ext:String) = Action.async {
+    (projActor ? Files(projName, ext)).mapTo[Map[String, String]].map { result => Ok(Json.toJson(result))}
   }
 
-  def srcFiles(projName:String, ext:String) = Action {
-    val cp = ServerEnv(projectFromName(projName).path)
-    val r = ext match {
-      case null => Map(cp.srcroot.walk.map( p => p.name -> p.path).toList:_*)
-      case extension => Map(cp.sourceWithExention(ext).map(p => p.name -> p.path):_*)
-    }
-    Ok(Json.toJson(r))
-  }
-
-  def registerProj(name:String, url:String) = Action {
-    val projLocation = URLDecoder.decode(url, "UTF-8")
-    val newproj = Project.newProj(name, url)
-    Ok("succ")
+  def registerProj(name:String, url:String) = Action.async { val projLocation = URLDecoder.decode(url, "UTF-8")
+    (projActor ? NewProj(name, projLocation)).mapTo[Project].map{ result => Ok("succ")}
   }
 
   // TODO: finish it

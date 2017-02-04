@@ -1,26 +1,24 @@
-package services
+package models
 
 import play.api.Environment
-import scala.reflect.io.Path
-import services.mpos.{DBService, DbCfg}
+import services.mpos.{QuerySession, DBService, DbCfg}
 
 case class Project(pname:String, path:String)
 
 object Project {
-  private def qs = H2Checker().genQuerySession
   val selfName = "mobildevmanager"
 
-  def named(n:String):Project = {
-    val p = qs.query(s"SELECT * FROM PROJECT p WHERE pn='${n}'").map{ item =>
-      Project(item("PN"), item("PURL")) 
-    }.headOption.getOrElse(null)         
-    qs.finish()
-    p
+  def named(n:String)(implicit session:QuerySession):Project =
+    session.query(s"SELECT * FROM PROJECT p WHERE pn='$n'").map{
+      item => Project(item("PN"), item("PURL"))
+    }.headOption.getOrElse(null.asInstanceOf[Project])
+
+  def all(implicit session:QuerySession):Seq[Project] = session.query("SELECT * FROM PROJECT").map {
+    item=> Project(item("PN"), item("PURL"))
   }
 
-  def newProj(n:String, url:String):Project = {
-    qs.exc(s"INSERT INTO PROJECT VALUES('$n','$url')")
-    qs.finish()
+  def newProj(n:String, url:String)(implicit session:QuerySession):Project = {
+    session.exc(s"INSERT INTO PROJECT VALUES('$n','$url')")
     Project(n,url)
   }
 
@@ -35,7 +33,7 @@ object Project {
       if( tbSchema.isEmpty ) {
         session.exc("CREATE TABLE PROJECT ( pn VARCHAR(128), purl VARCHAR(1024) )")
         val selfRoot = Environment.simple().rootPath
-        val insertSql = s"INSERT INTO PROJECT VALUES('$selfName', '${selfRoot.getAbsolutePath()}')"
+        val insertSql = s"INSERT INTO PROJECT VALUES('$selfName', '${selfRoot.getAbsolutePath}')"
         session.exc(insertSql)
       }
       session.finish()

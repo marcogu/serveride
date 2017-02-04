@@ -5,7 +5,6 @@ import play.Logger
 import play.api.mvc._
 import play.api.mvc.Controller
 import services.mpos.{DbCfg, DBService}
-import services.Project
 import play.api.libs.json.Json
 
 /**
@@ -35,6 +34,6 @@ class DBController extends Controller{
 
   // test did passed
   def embededH2() = Action {
-    Ok(Project.named(Project.selfName).path)
+    Ok("----------")
   }
 }
