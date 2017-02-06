@@ -33,7 +33,10 @@ GET		/editor/:path 				controllers.EditorController.editorView(path)
 POST    /editor/save/:path          controllers.EditorController.save(path)
 GET		/scode/all 					controllers.EditorController.srcFiles(p="self", e=null)
 GET		/scode/:p/:e 				controllers.EditorController.srcFiles(p:String, e:String)
-GET		/scode/new/:n/:url 			controllers.EditorController.registerProj(n:String, url:String)
+GET     /proj/info/:n               controllers.EditorController.projinfo(n)
+GET		/proj/new/:n/:url 			controllers.EditorController.registerProj(n:String, url:String)
+
+#GET     /scode/gen/:n               controllers.EditorController.genproj(n)
 
 # for test
 GET     /tdb2                       controllers.DBController.embededH2

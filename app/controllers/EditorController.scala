@@ -8,9 +8,10 @@ import models.viewparam.CodeMirrorModeInfo
 import play.api.libs.json.Json
 import play.api.{Logger, Environment}
 import play.api.mvc.Controller
+import services.actor.DevApp.{RunningInfo, AppInfo}
 import services.actor.ProjOnH2Actor
-import services.actor.ProjOnH2Actor.{NewProj, Files}
-import services.inspection.ServerEnv
+import services.actor.ProjOnH2Actor.{Named, NewProj, Files}
+import services.inspection.AppEnv
 import play.api.mvc._
 import scala.reflect.io.Path
 import akka.pattern.ask
@@ -22,15 +23,19 @@ import scala.concurrent.duration._
   * Created by marco on 2017/1/25.
   */
 class EditorController @Inject() (env:Environment, system:ActorSystem) extends Controller{
-  val projActor = ProjOnH2Actor(system)
   implicit val timeout: akka.util.Timeout = 5.seconds
+  implicit val jsProj = Json.format[Project]
+  implicit val jsRunInfo = Json.format[RunningInfo]
+  implicit val jsAppInfo = Json.format[AppInfo]
+
+  val projActor = ProjOnH2Actor(system)
 
   def editorView(path:String = null) = {
     val pageInfo = path match {
       case null | "" =>  CodeMirrorModeInfo(Path(""))
       case other => CodeMirrorModeInfo(Path(URLDecoder.decode(path, "UTF-8")))
     }
-    val ctt = ServerEnv.srcContent(pageInfo.filePath.path)
+    val ctt = AppEnv.srcContent(pageInfo.filePath.path)
     Action(Ok(views.html.codereditorfull(pageInfo.mainarg, pageInfo.cmtype, ctt, path, pageInfo.filePath.name)))
   }
 
@@ -39,7 +44,11 @@ class EditorController @Inject() (env:Environment, system:ActorSystem) extends C
   }
 
   def registerProj(name:String, url:String) = Action.async { val projLocation = URLDecoder.decode(url, "UTF-8")
-    (projActor ? NewProj(name, projLocation)).mapTo[Project].map{ result => Ok("succ")}
+    (projActor ? NewProj(name, projLocation)).mapTo[AppInfo].map{ r => Ok(Json.toJson(r))}
+  }
+
+  def projinfo(name:String) = Action.async {
+    (projActor ? Named(name)).mapTo[AppInfo].map{ info => Ok(Json.toJson(info))}
   }
 
   // TODO: finish it

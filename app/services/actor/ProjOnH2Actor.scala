@@ -3,7 +3,7 @@ package services.actor
 import akka.actor._
 import models.Project
 import models.Project.H2Checker
-import services.inspection.ServerEnv
+import services.inspection.AppEnv
 
 
 object ProjOnH2Actor {
@@ -26,7 +26,7 @@ object ProjOnH2Actor {
   }
 
   case class Named(specName:String)
-  case class All()
+  case object All
   case class NewProj(pname:String, path:String)
   case class Files(pname:String, extension:String)
 }
@@ -37,18 +37,25 @@ class ProjOnH2Actor extends Actor {
   implicit val session = H2Checker().genQuerySession
 
   def receive = {
-    case Named(n) => sender() ! Project.named(filterName(n))
-    case All() => sender() ! Project.all
-    case NewProj(n, p) => sender() ! Project.newProj(n, p)
-    case Files(n, ext) => sender() ! scodeFilter(ext, ServerEnv(Project.named(filterName(n)).path))
+    case Named(n) =>
+      def actorFromDb = context.actorOf(DevApp.props(Project.named(filterName(n))))
+      context.child(n).fold( actorFromDb.forward(DevApp.Info) )(_.forward(DevApp.Info))
+    case All => sender() ! Project.all
+    case NewProj(n, p) => context.child(n).fold(newProject(n, p))(_.forward(DevApp.Info))
+    case Files(n, ext) => sender() ! scodeFilter(ext, AppEnv(Project.named(filterName(n)).path))
   }
 
-  def filterName(name:String):String = name match {
+  private def newProject(name:String, path:String):Unit = Project.named(name) match {
+    case null => context.actorOf(DevApp.props(Project.newProj(name, path)), name).forward(DevApp.Gen)
+    case other => context.actorOf(DevApp.props(other), name).forward(DevApp.Gen)
+  }
+
+  private def filterName(name:String):String = name match {
     case null | "self" | "SELF" => Project.selfName
     case other => other
   }
 
-  def scodeFilter(extension:String, cp:ServerEnv):Map[String, String] = extension match {
+  private def scodeFilter(extension:String, cp:AppEnv):Map[String, String] = extension match {
     case null | "" => Map(cp.srcroot.walk.map( p => p.name -> p.path).toList:_*)
     case other => Map(cp.sourceWithExention(other).map(p => p.name -> p.path):_*)
   }
