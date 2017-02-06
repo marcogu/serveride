@@ -35,6 +35,8 @@ GET		/scode/all 					controllers.EditorController.srcFiles(p="self", e=null)
 GET		/scode/:p/:e 				controllers.EditorController.srcFiles(p:String, e:String)
 GET     /proj/info/:n               controllers.EditorController.projinfo(n)
 GET		/proj/new/:n/:url 			controllers.EditorController.registerProj(n:String, url:String)
+GET     /proj/run/:n                controllers.EditorController.runapp(n)
+GET     /proj/stop/:n               controllers.EditorController.stopapp(n)
 
 #GET     /scode/gen/:n               controllers.EditorController.genproj(n)
 

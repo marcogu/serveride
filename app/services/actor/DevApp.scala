@@ -15,21 +15,29 @@ class DevApp(proj:Project) extends Actor{
   import scala.sys.process._
 
   private val genAppCmd = Seq[String](script.path, proj.path, proj.pname, template.path)
-  private var running = false
+  private val appRoot = Path(proj.path) / proj.pname
 
+  private var running = false
+  private var isValide = false
   def appArchitectureCheck:Boolean = (Path(proj.path) / proj.pname) exists
 
   def receive = {
     case Info => sender() ! AppInfo(proj, running, check())
     case Gen => sender() ! check()
-    case Run =>
-    case Stop =>
+    case Run => forwardMornitor(Run)
+    case Stop => forwardMornitor(Stop)
   }
 
-  def check():Option[RunningInfo] = if(!appArchitectureCheck){
-    println("-------"+selfRoot)
-    Some(RunningInfo("init", "init", genAppCmd !!))
-  } else None
+  private def check():Option[RunningInfo] ={
+    isValide = appArchitectureCheck
+    if(!isValide){ Some(RunningInfo("init", "init", genAppCmd !!))} else None
+  }
+
+  private def forwardMornitor(cmd:AnyRef) = isValide match {
+    case true =>
+      context.child("monitor").fold(context.actorOf(Props( new RMornitor(appRoot.path) )).forward(cmd))(_.forward(cmd))
+    case false => sender() ! "application is not be create"
+  }
 }
 
 
@@ -37,7 +45,6 @@ object DevApp{
   def props(proj:Project) = Props(new DevApp(proj))
 
   import play.api.Environment
-
   val selfRoot = Path(Environment.simple().rootPath.getCanonicalPath)
   val (script, template) = (selfRoot / "public/playprojcr/playg.sh", selfRoot / "public/playprojcr/tpfolder")
 
@@ -48,6 +55,4 @@ object DevApp{
 
   case class RunningInfo(sessionId:String, logId:String, logInfo:String)
   case class AppInfo(proj:Project, runing:Boolean, lastLogger:Option[RunningInfo])
-
-
 }

@@ -29,30 +29,31 @@ object ProjOnH2Actor {
   case object All
   case class NewProj(pname:String, path:String)
   case class Files(pname:String, extension:String)
+  case class Run(spcname:String)
+  case class Stop(spcname:String)
 }
 
 class ProjOnH2Actor extends Actor {
   import ProjOnH2Actor._
-
   implicit val session = H2Checker().genQuerySession
 
   def receive = {
-    case Named(n) =>
-      def actorFromDb = context.actorOf(DevApp.props(Project.named(filterName(n))))
-      context.child(n).fold( actorFromDb.forward(DevApp.Info) )(_.forward(DevApp.Info))
+    case Named(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Info) )(_.forward(DevApp.Info))
     case All => sender() ! Project.all
     case NewProj(n, p) => context.child(n).fold(newProject(n, p))(_.forward(DevApp.Info))
-    case Files(n, ext) => sender() ! scodeFilter(ext, AppEnv(Project.named(filterName(n)).path))
+    case Files(n, ext) => sender() ! scodeFilter(ext, AppEnv(Project.named(n).path))
+    case Run(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Run) )(_.forward(DevApp.Run))
+    case Stop(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Stop) )(_.forward(DevApp.Stop))
+  }
+
+  private def actorFromQuery(pname:String):ActorRef = Project.named(pname) match {
+    case null => null
+    case proj => context.actorOf(DevApp.props(proj), pname)
   }
 
   private def newProject(name:String, path:String):Unit = Project.named(name) match {
     case null => context.actorOf(DevApp.props(Project.newProj(name, path)), name).forward(DevApp.Gen)
     case other => context.actorOf(DevApp.props(other), name).forward(DevApp.Gen)
-  }
-
-  private def filterName(name:String):String = name match {
-    case null | "self" | "SELF" => Project.selfName
-    case other => other
   }
 
   private def scodeFilter(extension:String, cp:AppEnv):Map[String, String] = extension match {

@@ -10,7 +10,7 @@ import play.api.{Logger, Environment}
 import play.api.mvc.Controller
 import services.actor.DevApp.{RunningInfo, AppInfo}
 import services.actor.ProjOnH2Actor
-import services.actor.ProjOnH2Actor.{Named, NewProj, Files}
+import services.actor.ProjOnH2Actor._
 import services.inspection.AppEnv
 import play.api.mvc._
 import scala.reflect.io.Path
@@ -49,6 +49,14 @@ class EditorController @Inject() (env:Environment, system:ActorSystem) extends C
 
   def projinfo(name:String) = Action.async {
     (projActor ? Named(name)).mapTo[AppInfo].map{ info => Ok(Json.toJson(info))}
+  }
+
+  def runapp(name:String) = Action.async {
+    (projActor ? Run(name)).mapTo[RunningInfo].map{ info => Ok(Json.toJson(info))}
+  }
+
+  def stopapp(name:String) = Action.async {
+    (projActor ? Stop(name)).mapTo[RunningInfo].map{ info => Ok(Json.toJson(info))}
   }
 
   // TODO: finish it
