@@ -53,7 +53,7 @@ class ProjOnH2Actor extends Actor {
   }
 
   private def newProject(name:String, path:String):Unit = Project.named(name) match {
-    case null => context.actorOf(DevApp.props(Project.newProj(name, path)), name).forward(DevApp.Gen)
-    case other => context.actorOf(DevApp.props(other), name).forward(DevApp.Gen)
+    case null => context.actorOf(DevApp.props(Project.newProj(name, path)), name).forward(DevApp.Info)
+    case other => context.actorOf(DevApp.props(other), name).forward(DevApp.Info)
   }
 }

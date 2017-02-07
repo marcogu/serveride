@@ -14,6 +14,7 @@ class DevApp(proj:Project) extends Actor{
   import DevApp._
   import scala.sys.process._
 
+  val actorName = "monitor"
   private val genAppCmd = Seq[String](script.path, proj.path, proj.pname, template.path)
   private val appRoot = Path(proj.path) / proj.pname
 
@@ -22,24 +23,31 @@ class DevApp(proj:Project) extends Actor{
   def appArchitectureCheck:Boolean = (Path(proj.path) / proj.pname) exists
 
   def receive = {
-    case Info => sender() ! AppInfo(proj, running, check())
-    case Gen => sender() ! AppInfo(proj,running, check())
-    case Run => forwardMornitor(Run)
+    case Info => check()
+    case Run => forwardMornitor(DevApp.Run(DevApp.runscript))
     case Stop => forwardMornitor(Stop)
     case Files(f, e) => sender() ! sourceCodes(f, e)
   }
 
-  private def check():Option[RunningInfo] ={
-    isValide = appArchitectureCheck
-    if(!isValide){ Some(RunningInfo("init", "init", genAppCmd !!))} else None
+  private def check() = { isValide = appArchitectureCheck
+    isValide match {
+      case true => forwardMornitor(Info)
+      case false => sender() ! AppInfo(proj, running, Some(RunningInfo("init", "init", genAppCmd !!)))
+    }
   }
 
   private def forwardMornitor(cmd:AnyRef) = isValide match {
     case true =>
-      context.child("monitor").fold(context.actorOf(Props( new RMornitor(appRoot.path) )).forward(cmd))(_.forward(cmd))
+      context.child(actorName).fold(context.actorOf(Props(new RMornitor(appRoot.path)), actorName).forward(cmd))(_.forward(cmd))
     case false => sender() ! "application is not be create"
   }
 
+  /** Get Play application source codes where under project/app folder
+    *
+    * @param filter The name like parterm
+    * @param ext Search limited with file extension, ex: scala, java, js, html, less, cass, css ...
+    * @return Collect all source codes in Map data struct.
+    * */
   private def sourceCodes(filter:String, ext:String):Map[String, String] = {
     val srcs = appRoot / "app"
     def pMapTo(p:Path) = p.name -> p.path
@@ -57,12 +65,13 @@ object DevApp{
   import play.api.Environment
   val selfRoot = Path(Environment.simple().rootPath.getCanonicalPath)
   val (script, template) = (selfRoot / "public/playprojcr/playg.sh", selfRoot / "public/playprojcr/tpfolder")
+  val runscript = selfRoot / "public/apprunscript/sbtrunplay.sh"
 
   case object Info
-  case object Gen
-  case object Run
   case object Stop
+  case object Run
 
+  case class Run(runScript: Path)
   case class Files(filter:String, extentions:String)
   case class RunningInfo(sessionId:String, logId:String, logInfo:String)
   case class AppInfo(proj:Project, runing:Boolean, lastLogger:Option[RunningInfo])
