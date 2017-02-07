@@ -41,7 +41,8 @@ class ProjOnH2Actor extends Actor {
     case Named(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Info) )(_.forward(DevApp.Info))
     case All => sender() ! Project.all
     case NewProj(n, p) => context.child(n).fold(newProject(n, p))(_.forward(DevApp.Info))
-    case Files(n, ext) => sender() ! scodeFilter(ext, AppEnv(Project.named(n).path))
+    case Files(n, ext) => val cmd = DevApp.Files("", ext)
+      context.child(n).fold(actorFromQuery(n).forward(cmd))(_.forward(cmd))
     case Run(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Run) )(_.forward(DevApp.Run))
     case Stop(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Stop) )(_.forward(DevApp.Stop))
   }
@@ -54,10 +55,5 @@ class ProjOnH2Actor extends Actor {
   private def newProject(name:String, path:String):Unit = Project.named(name) match {
     case null => context.actorOf(DevApp.props(Project.newProj(name, path)), name).forward(DevApp.Gen)
     case other => context.actorOf(DevApp.props(other), name).forward(DevApp.Gen)
-  }
-
-  private def scodeFilter(extension:String, cp:AppEnv):Map[String, String] = extension match {
-    case null | "" => Map(cp.srcroot.walk.map( p => p.name -> p.path).toList:_*)
-    case other => Map(cp.sourceWithExention(other).map(p => p.name -> p.path):_*)
   }
 }

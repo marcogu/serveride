@@ -31,7 +31,7 @@ GET     /assets/lib/*file               controllers.Assets.at(path="/public/lib"
 GET     /editor                     controllers.EditorController.editorView(path=null)
 GET		/editor/:path 				controllers.EditorController.editorView(path)
 POST    /editor/save/:path          controllers.EditorController.save(path)
-GET		/scode/all 					controllers.EditorController.srcFiles(p="self", e=null)
+GET		/scode/all 					controllers.EditorController.srcFiles(p="CrjqSwiperMockServer", e=null)
 GET		/scode/:p/:e 				controllers.EditorController.srcFiles(p:String, e:String)
 GET     /proj/info/:n               controllers.EditorController.projinfo(n)
 GET		/proj/new/:n/:url 			controllers.EditorController.registerProj(n:String, url:String)

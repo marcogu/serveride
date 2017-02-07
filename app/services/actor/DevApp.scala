@@ -23,9 +23,10 @@ class DevApp(proj:Project) extends Actor{
 
   def receive = {
     case Info => sender() ! AppInfo(proj, running, check())
-    case Gen => sender() ! check()
+    case Gen => sender() ! AppInfo(proj,running, check())
     case Run => forwardMornitor(Run)
     case Stop => forwardMornitor(Stop)
+    case Files(f, e) => sender() ! sourceCodes(f, e)
   }
 
   private def check():Option[RunningInfo] ={
@@ -37,6 +38,15 @@ class DevApp(proj:Project) extends Actor{
     case true =>
       context.child("monitor").fold(context.actorOf(Props( new RMornitor(appRoot.path) )).forward(cmd))(_.forward(cmd))
     case false => sender() ! "application is not be create"
+  }
+
+  private def sourceCodes(filter:String, ext:String):Map[String, String] = {
+    val srcs = appRoot / "app"
+    def pMapTo(p:Path) = p.name -> p.path
+    ext match {
+      case null | ""  => Map(srcs.walk.map( pMapTo).toList:_*)
+      case other => Map(srcs.walk.filter( p => p.extension.equals(other) && p.isFile).map(pMapTo).toList:_*)
+    }
   }
 }
 
@@ -53,6 +63,7 @@ object DevApp{
   case object Run
   case object Stop
 
+  case class Files(filter:String, extentions:String)
   case class RunningInfo(sessionId:String, logId:String, logInfo:String)
   case class AppInfo(proj:Project, runing:Boolean, lastLogger:Option[RunningInfo])
 }

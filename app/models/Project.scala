@@ -6,7 +6,7 @@ import services.mpos.{QuerySession, DBService, DbCfg}
 case class Project(pname:String, path:String)
 
 object Project {
-  val selfName = "mobildevmanager"
+  val selfName = "CrjqSwiperMockServer"
 
   def named(n:String)(implicit session:QuerySession):Project =
     session.query(s"SELECT * FROM PROJECT p WHERE pn='$n'").map{
