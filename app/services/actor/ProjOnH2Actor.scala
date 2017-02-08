@@ -3,7 +3,6 @@ package services.actor
 import akka.actor._
 import models.Project
 import models.Project.H2Checker
-import services.inspection.AppEnv
 
 
 object ProjOnH2Actor {

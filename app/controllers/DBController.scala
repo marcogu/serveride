@@ -31,9 +31,4 @@ class DBController extends Controller{
   def listds() = Action {
     Ok(Json.toJson(DBService.alldsCfg(cfg => Map(cfg.act->cfg.url)).toArray))
   }
-
-  // test did passed
-  def embededH2() = Action {
-    Ok("----------")
-  }
 }

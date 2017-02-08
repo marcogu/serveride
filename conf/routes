@@ -41,4 +41,5 @@ GET     /proj/stop/:n               controllers.EditorController.stopapp(n)
 #GET     /scode/gen/:n               controllers.EditorController.genproj(n)
 
 # for test
-GET     /tdb2                       controllers.DBController.embededH2
+GET     /env                       controllers.Application.env
+GET     /pid                       controllers.Application.pid

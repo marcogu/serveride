@@ -1,25 +1,14 @@
 package services.inspection
 
 
-import play.api.Environment
+import java.lang.management.ManagementFactory
 import scala.io.BufferedSource
-import scala.reflect.io.Path
 
 /**
   * Created by marco on 2017/1/24.
   *
   */
-class AppEnv(rootPath:Path){
-  val srcroot = rootPath / "app"
-  def rootSubnames = srcroot.toFile.jfile.listFiles().map( f => f.getName).toSeq
-  def sourceWithExention(extension:String) =
-    srcroot.walk.filter( p => p.extension.equals(extension) && p.isFile).toList
-}
-
-
 object AppEnv {
-  def apply(env:Environment):AppEnv = new AppEnv(env.rootPath.getAbsolutePath)
-  def apply(pPath:String):AppEnv = new AppEnv(Path(pPath))
 
   def srcContent(path:String):String = {
     var source:BufferedSource = null
@@ -33,5 +22,14 @@ object AppEnv {
     }
   }
 
+  lazy val rtbean = ManagementFactory.getRuntimeMXBean
+  lazy val hostInfo:collection.Map[String, String] = hostSys()
+  private val pidParttern = """^([0-9]+)@.+$""".r
+  private def hostSys() = scala.collection.JavaConversions.mapAsScalaMap(rtbean.getSystemProperties)
 
+  lazy val processId = selfPid()
+  private def selfPid():String = pidParttern.findAllMatchIn(rtbean.getName).collectFirst[String]{
+    case m => m.group(1)
+  }.getOrElse("")
 }
+
