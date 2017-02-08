@@ -2,7 +2,6 @@ package services.actor
 
 import akka.actor._
 import models.Project
-import models.Project.H2Checker
 
 
 object ProjOnH2Actor {
@@ -34,7 +33,7 @@ object ProjOnH2Actor {
 
 class ProjOnH2Actor extends Actor {
   import ProjOnH2Actor._
-  implicit val session = H2Checker().genQuerySession
+  implicit val session = Project.DDL().genQuerySession
 
   def receive = {
     case Named(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Info) )(_.forward(DevApp.Info))

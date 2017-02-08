@@ -43,3 +43,4 @@ GET     /proj/stop/:n               controllers.EditorController.stopapp(n)
 # for test
 GET     /env                       controllers.Application.env
 GET     /pid                       controllers.Application.pid
+GET     /tt                        controllers.Application.tt
