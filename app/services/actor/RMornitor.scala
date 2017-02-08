@@ -10,19 +10,17 @@ import scala.sys.process._
 /**
   * Created by marco on 2017/2/6.
   */
-class RMornitor(path:String) extends Actor{
-  private val p = Path(path)
+class RMornitor(proj:Project) extends Actor{
   private var processing:(Process, Integer) = null
-  var counter = 0
 
   def receive = {
     case DevApp.Info =>
-      sender() ! DevApp.AppInfo(Project(p.name, p.parent.path), processing!=null, genLog("state"))
+      sender() ! DevApp.AppInfo(proj, processing!=null, genLog("state"))
     case DevApp.Run(scriptp) => sender() ! excSbtrun(scriptToCmd(scriptp))
     case DevApp.Stop => sender() ! stopSbtRun()
   }
 
-  private def scriptToCmd(script:Path):String = s"${script.path} $path"
+  private def scriptToCmd(script:Path):String = s"${script.path} ${proj.root.path}"
 
   private def genLog(logId:String) = processing match {
     case null => None

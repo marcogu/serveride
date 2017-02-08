@@ -16,8 +16,6 @@ class DevApp(proj:Project) extends Actor{
 
   val actorName = "monitor"
   private val genAppCmd = Seq[String](script.path, proj.path, proj.pname, template.path)
-  private val appRoot = Path(proj.path) / proj.pname
-
   private var running = false
   private var isValide = false
   def appArchitectureCheck:Boolean = (Path(proj.path) / proj.pname) exists
@@ -38,7 +36,7 @@ class DevApp(proj:Project) extends Actor{
 
   private def forwardMornitor(cmd:AnyRef) = isValide match {
     case true =>
-      context.child(actorName).fold(context.actorOf(Props(new RMornitor(appRoot.path)), actorName).forward(cmd))(_.forward(cmd))
+      context.child(actorName).fold(context.actorOf(Props(new RMornitor(proj)), actorName).forward(cmd))(_.forward(cmd))
     case false => sender() ! "application is not be create"
   }
 
@@ -49,7 +47,7 @@ class DevApp(proj:Project) extends Actor{
     * @return Collect all source codes in Map data struct.
     * */
   private def sourceCodes(filter:String, ext:String):Map[String, String] = {
-    val srcs = appRoot / "app"
+    val srcs = proj.root / "app"
     def pMapTo(p:Path) = p.name -> p.path
     ext match {
       case null | ""  => Map(srcs.walk.map( pMapTo).toList:_*)

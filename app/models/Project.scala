@@ -3,7 +3,10 @@ package models
 import play.api.Environment
 import services.mpos.{QuerySession, DBService, DbCfg}
 
-case class Project(pname:String, path:String)
+case class Project(pname:String, path:String){
+  import scala.reflect.io.Path
+  lazy val root = Path(path) / pname
+}
 
 object Project {
   val selfName = "CrjqSwiperMockServer"
