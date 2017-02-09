@@ -44,6 +44,8 @@ class RMornitor(proj:Project) extends Actor{
     DevApp.RunningInfo("test","test", stopInfo)
   }
 
+  // Process Callback thread and Actor thread is probably not the same, So
+  // Don't share any class sope data.
   private def consoleP(in:InputStream):Unit = scala.io.Source.fromInputStream(in).getLines.foreach{ line =>
     println(line)
   }
