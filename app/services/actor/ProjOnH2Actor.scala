@@ -23,12 +23,17 @@ object ProjOnH2Actor {
     }
   }
 
+  trait NamedProject{
+    def pname:String
+  }
+
   case class Named(specName:String)
   case object All
-  case class NewProj(pname:String, path:String)
-  case class Files(pname:String, extension:String)
-  case class Run(spcname:String)
-  case class Stop(spcname:String)
+  case class NewProj(pname:String, path:String) extends NamedProject
+  case class Files(pname:String, extension:String) extends NamedProject
+  case class Run(pname:String) extends NamedProject
+  case class Stop(pname:String) extends NamedProject
+  case class Console(pname:String) extends NamedProject
 }
 
 class ProjOnH2Actor extends Actor {
@@ -43,6 +48,8 @@ class ProjOnH2Actor extends Actor {
       context.child(n).fold(actorFromQuery(n).forward(cmd))(_.forward(cmd))
     case Run(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Run) )(_.forward(DevApp.Run))
     case Stop(n) => context.child(n).fold( actorFromQuery(n).forward(DevApp.Stop) )(_.forward(DevApp.Stop))
+    case pcmd:NamedProject =>
+      context.child(pcmd.pname).fold( actorFromQuery(pcmd.pname).forward(pcmd) )(_.forward(pcmd))
   }
 
   private def actorFromQuery(pname:String):ActorRef = Project.named(pname) match {

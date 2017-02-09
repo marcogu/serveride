@@ -20,18 +20,33 @@ class DevApp(proj:Project) extends Actor{
   private var isValide = false
   def appArchitectureCheck:Boolean = (Path(proj.path) / proj.pname) exists
 
-  def receive = {
-    case Info => check()
-    case Run => forwardMornitor(DevApp.Run(DevApp.runscript))
-    case Stop => forwardMornitor(Stop)
-    case Files(f, e) => sender() ! sourceCodes(f, e)
+  override def preStart(): Unit = {
+    isValide = appArchitectureCheck
   }
 
-  private def check() = { isValide = appArchitectureCheck
-    isValide match {
-      case true => forwardMornitor(Info)
-      case false => sender() ! AppInfo(proj, running, Some(RunningInfo("init", "init", genAppCmd !!)))
+  def receive = {
+    case Info => check()
+
+    case Run => running match {
+      case true => check()
+      case false => running = true; forwardMornitor(DevApp.Run(DevApp.runscript))
     }
+
+    case Stop => running match {
+      case true => running = false; forwardMornitor(Stop)
+      case false => check()
+    }
+
+    case Files(f, e) => sender() ! sourceCodes(f, e)
+    case services.actor.ProjOnH2Actor.Console(name) => running match {
+      case true => forwardMornitor(services.actor.RunningStdLog.AllCached)
+      case false =>
+    }
+  }
+
+  private def check() = isValide match {
+    case true => forwardMornitor(Info)
+    case false => sender() ! AppInfo(proj, running, Some(RunningInfo("init", "init", genAppCmd !!)))
   }
 
   private def forwardMornitor(cmd:AnyRef) = isValide match {

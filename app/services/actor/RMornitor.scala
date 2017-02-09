@@ -1,9 +1,11 @@
 package services.actor
 
 import java.io.InputStream
+import java.util.Date
 
-import akka.actor.Actor
+import akka.actor.{ActorRef, PoisonPill, Actor}
 import models.Project
+import services.actor.RunningStdLog.AllCached
 import scala.reflect.io.Path
 import scala.sys.process._
 
@@ -12,12 +14,14 @@ import scala.sys.process._
   */
 class RMornitor(proj:Project) extends Actor{
   private var processing:(Process, Integer) = null
+  private var logactorRef:Option[ActorRef] = None
 
   def receive = {
     case DevApp.Info =>
       sender() ! DevApp.AppInfo(proj, processing!=null, genLog("state"))
     case DevApp.Run(scriptp) => sender() ! excSbtrun(scriptToCmd(scriptp))
     case DevApp.Stop => sender() ! stopSbtRun()
+    case AllCached => logactorRef.fold()(_.forward(AllCached))
   }
 
   private def scriptToCmd(script:Path):String = s"${script.path} ${proj.root.path}"
@@ -29,6 +33,8 @@ class RMornitor(proj:Project) extends Actor{
 
   private def excSbtrun(cmd:String):DevApp.RunningInfo = {
     processing = determinProcess(cmd.run(new ProcessIO( o=> Unit, stdin=>consoleP(stdin), ein=>consoleP(ein))))
+    stopLogMonitor()
+    logactorRef = Some(context.actorOf(RunningStdLog.props(genLogerFile(proj.root, processing._2.toLong)), "loger"))
     DevApp.RunningInfo(s"${processing._2}","run",s"$cmd")
   }
 
@@ -41,13 +47,14 @@ class RMornitor(proj:Project) extends Actor{
     val stopInfo = s"process ${processing._2} was terminated"
     processing._1.destroy()
     processing = null
+    stopLogMonitor()
     DevApp.RunningInfo("test","test", stopInfo)
   }
 
   // Process Callback thread and Actor thread is probably not the same, So
   // Don't share any class sope data.
-  private def consoleP(in:InputStream):Unit = scala.io.Source.fromInputStream(in).getLines.foreach{ line =>
-    println(line)
+  private def consoleP(in:InputStream):Unit = scala.io.Source.fromInputStream(in).getLines.foreach{
+     line => logactorRef.fold()(_ ! RunningStdLog.Line(Some(line), None) )
   }
 
   private def determinProcess(p:Process):(Process, Integer) = try{ (p, tryGetPid(p)) } catch {
@@ -70,5 +77,22 @@ class RMornitor(proj:Project) extends Actor{
       case "java.lang.UNIXProcess" => acc("pid", maybeJProcess).asInstanceOf[Integer]
       case other => -1
     }
+  }
+
+  def genLogerFile(projPath:Path, pid:Long):Path = {
+    val logFileName = pid match {
+      case -1 => new Date().getTime.toHexString
+      case other => s"${other.longValue().toHexString}-" +
+        s"${(new Date().getTime / 1000).toHexString}-" +
+        s"${(new util.Random).nextInt(255).toHexString}"
+    }
+    val logf = projPath / logFileName
+    if(!logf.exists) logf.createFile()
+    logf
+  }
+
+  private def stopLogMonitor() =  {
+    logactorRef.fold()(_ ! PoisonPill)
+    logactorRef = None
   }
 }

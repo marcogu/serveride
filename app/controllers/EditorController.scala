@@ -13,6 +13,7 @@ import services.actor.ProjOnH2Actor
 import services.actor.ProjOnH2Actor._
 import services.inspection.AppEnv
 import play.api.mvc._
+import scala.concurrent.Future
 import scala.reflect.io.Path
 import akka.pattern.ask
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -51,12 +52,16 @@ class EditorController @Inject() (env:Environment, system:ActorSystem) extends C
     (projActor ? Named(name)).mapTo[AppInfo].map{ info => Ok(Json.toJson(info))}
   }
 
-  def runapp(name:String) = Action.async {
-    (projActor ? Run(name)).mapTo[RunningInfo].map{ info => Ok(Json.toJson(info))}
+  def runapp(name:String) = Action.async { appCmdHelper(Run(name))}
+  def stopapp(name:String) = Action.async { appCmdHelper(Stop(name))}
+
+  def appCmdHelper(cmd:AnyRef):Future[Result] = (projActor ? cmd).collect{
+    case result:RunningInfo => Ok(Json.toJson(result))
+    case areadyRun:AppInfo =>  Ok(Json.toJson(areadyRun))
   }
 
-  def stopapp(name:String) = Action.async {
-    (projActor ? Stop(name)).mapTo[RunningInfo].map{ info => Ok(Json.toJson(info))}
+  def consoleScreen(runningProjName:String) = Action.async {
+    (projActor ? Console(runningProjName)).map{ r=> Ok(r.toString)}
   }
 
   // TODO: finish it
