@@ -45,3 +45,4 @@ GET     /proj/console/:n            controllers.EditorController.consoleScreen(n
 GET     /env                       controllers.Application.env
 GET     /pid                       controllers.Application.pid
 GET     /tt                        controllers.Application.tt
+GET     /socket                    controllers.EditorController.socket

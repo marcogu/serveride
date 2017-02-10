@@ -1,15 +1,17 @@
 package controllers
 
 import java.net.URLDecoder
-import javax.inject.Inject
-import akka.actor.ActorSystem
+import javax.inject.{Singleton, Inject}
+import akka.actor.{Props, ActorSystem}
+import akka.stream.Materializer
 import models.Project
 import models.viewparam.CodeMirrorModeInfo
-import play.api.libs.json.Json
-import play.api.{Logger, Environment}
+import play.api.libs.json.{JsValue, Json}
+import play.api.Logger
+import play.api.libs.streams.ActorFlow
 import play.api.mvc.Controller
 import services.actor.DevApp.{RunningInfo, AppInfo}
-import services.actor.ProjOnH2Actor
+import services.actor.{RMMember, WSRoom, ProjOnH2Actor}
 import services.actor.ProjOnH2Actor._
 import services.inspection.AppEnv
 import play.api.mvc._
@@ -23,13 +25,20 @@ import scala.concurrent.duration._
 /**
   * Created by marco on 2017/1/25.
   */
-class EditorController @Inject() (env:Environment, system:ActorSystem) extends Controller{
+@Singleton
+class EditorController @Inject() (implicit system:ActorSystem, materializer: Materializer) extends Controller{
   implicit val timeout: akka.util.Timeout = 5.seconds
   implicit val jsProj = Json.format[Project]
   implicit val jsRunInfo = Json.format[RunningInfo]
   implicit val jsAppInfo = Json.format[AppInfo]
 
   val projActor = ProjOnH2Actor(system)
+
+  val websocketDefaultRoom = WSRoom(system)
+
+  def socket = WebSocket.accept[String, String] { request =>
+    ActorFlow.actorRef { out => websocketDefaultRoom.inRoom(out)}
+  }
 
   def editorView(path:String = null) = {
     val pageInfo = path match {
