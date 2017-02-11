@@ -19,7 +19,7 @@ class RMMember(room:ActorRef, socketOut:ActorRef, roomId:String) extends Actor{
   def receive = {
     case Publish(msg) => socketOut ! msg
     case msg: JsValue => println(msg)
-    case msg: String => println(msg);  socketOut ! "my name is marco"
+    case msg: String => println(self.path) //  socketOut ! "my name is marco"
     case msg: Array[Byte] => println(msg.length);
     case other => println(other)
   }

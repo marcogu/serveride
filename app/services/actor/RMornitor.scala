@@ -13,6 +13,7 @@ import scala.sys.process._
   * Created by marco on 2017/2/6.
   */
 class RMornitor(proj:Project) extends Actor{
+  import
   private var processing:(Process, Integer) = null
   private var logactorRef:Option[ActorRef] = None
 

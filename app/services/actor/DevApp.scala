@@ -2,7 +2,7 @@ package services.actor
 
 import akka.actor.{Props, Actor}
 import models.Project
-
+import scala.sys.process._
 import scala.reflect.io.Path
 import language.postfixOps
 
@@ -12,7 +12,8 @@ import language.postfixOps
   */
 class DevApp(proj:Project) extends Actor{
   import DevApp._
-  import scala.sys.process._
+
+  import services.actor.ProjOnH2Actor._
 
   val actorName = "monitor"
   private val genAppCmd = Seq[String](script.path, proj.path, proj.pname, template.path)
@@ -25,27 +26,27 @@ class DevApp(proj:Project) extends Actor{
   }
 
   def receive = {
-    case Info => check()
+    case NewProj | Named => check()
 
     case Run => running match {
       case true => check()
-      case false => running = true; forwardMornitor(DevApp.Run(DevApp.runscript))
+      case false => running = true; forwardMornitor(Run(DevApp.runscript.path)) //forwardMornitor(DevApp.Run(DevApp.runscript))
     }
 
-    case Stop => running match {
-      case true => running = false; forwardMornitor(Stop)
+    case cmd:Stop => running match {
+      case true => running = false; forwardMornitor(cmd)
       case false => check()
     }
 
     case Files(f, e) => sender() ! sourceCodes(f, e)
-    case services.actor.ProjOnH2Actor.Console(name) => running match {
+    case Console(name) => running match {
       case true => forwardMornitor(services.actor.RunningStdLog.AllCached)
       case false =>
     }
   }
 
   private def check() = isValide match {
-    case true => forwardMornitor(Info)
+    case true => forwardMornitor(GetInfo)
     case false => sender() ! AppInfo(proj, running, Some(RunningInfo("init", "init", genAppCmd !!)))
   }
 
@@ -80,12 +81,9 @@ object DevApp{
   val (script, template) = (selfRoot / "public/playprojcr/playg.sh", selfRoot / "public/playprojcr/tpfolder")
   val runscript = selfRoot / "public/apprunscript/sbtrunplay.sh"
 
-  case object Info
-  case object Stop
-  case object Run
-
-  case class Run(runScript: Path)
-  case class Files(filter:String, extentions:String)
+//  case object Info // is Newed
+//  case class Files(filter:String, extentions:String)
+  case object GetInfo
   case class RunningInfo(sessionId:String, logId:String, logInfo:String)
   case class AppInfo(proj:Project, runing:Boolean, lastLogger:Option[RunningInfo])
 }
