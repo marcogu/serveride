@@ -5,6 +5,7 @@ import java.util.Date
 
 import akka.actor.{ActorRef, PoisonPill, Actor}
 import models.Project
+import services.actor.ProjOnH2Actor.{Run, Stop}
 import services.actor.RunningStdLog.AllCached
 import scala.reflect.io.Path
 import scala.sys.process._
@@ -13,15 +14,14 @@ import scala.sys.process._
   * Created by marco on 2017/2/6.
   */
 class RMornitor(proj:Project) extends Actor{
-  import
   private var processing:(Process, Integer) = null
   private var logactorRef:Option[ActorRef] = None
 
   def receive = {
-    case DevApp.Info =>
+    case DevApp.GetInfo =>
       sender() ! DevApp.AppInfo(proj, processing!=null, genLog("state"))
-    case DevApp.Run(scriptp) => sender() ! excSbtrun(scriptToCmd(scriptp))
-    case DevApp.Stop => sender() ! stopSbtRun()
+    case Run(strPath) => sender() ! excSbtrun(scriptToCmd(Path(strPath)))
+    case Stop(_) => sender() ! stopSbtRun()
     case AllCached => logactorRef.fold()(_.forward(AllCached))
   }
 

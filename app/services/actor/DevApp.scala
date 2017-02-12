@@ -26,11 +26,10 @@ class DevApp(proj:Project) extends Actor{
   }
 
   def receive = {
-    case NewProj | Named => check()
-
-    case Run => running match {
+    case Named(_) | NewProj(_, _) => check()
+    case Run(_) => running match {
       case true => check()
-      case false => running = true; forwardMornitor(Run(DevApp.runscript.path)) //forwardMornitor(DevApp.Run(DevApp.runscript))
+      case false => running = true; forwardMornitor(Run(DevApp.runscript.path))
     }
 
     case cmd:Stop => running match {
@@ -48,6 +47,7 @@ class DevApp(proj:Project) extends Actor{
   private def check() = isValide match {
     case true => forwardMornitor(GetInfo)
     case false => sender() ! AppInfo(proj, running, Some(RunningInfo("init", "init", genAppCmd !!)))
+      isValide = appArchitectureCheck
   }
 
   private def forwardMornitor(cmd:AnyRef) = isValide match {
