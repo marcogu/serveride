@@ -2,20 +2,20 @@ package services.actor
 
 import akka.actor._
 import models.Project
+import services.mpos.QuerySession
 
 
 object ProjOnH2Actor {
-  def props = Props[ProjOnH2Actor]
   val h2actName = "ProjOnH2Actor"
 
   private var inited:ActorRef = null
   private var initedSysName:String = ""
   // ! this is not a thread safe function.
-  def apply(system: ActorSystem) = {
+  def apply(implicit system: ActorSystem, s:QuerySession) = {
     val sname = system.name
     initedSysName match {
       case "" => initedSysName = system.name
-        inited = system.actorOf(props, h2actName)
+        inited = system.actorOf(Props(new ProjOnH2Actor), h2actName)
         inited
       case `sname` => inited
       case other => throw new RuntimeException(s"ProjOnH2Actor has been initialed on akka system:$initedSysName")
@@ -38,11 +38,9 @@ object ProjOnH2Actor {
 }
 
 
-
 //import collection.mutable.{Map=>MMap, Set=>MSet}
-class ProjOnH2Actor extends Actor {
+class ProjOnH2Actor(implicit session:QuerySession) extends Actor {
   import ProjOnH2Actor._
-  implicit val session = Project.DDL().genQuerySession
 
   def receive = {
     case All => sender() ! Project.all

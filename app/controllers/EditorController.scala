@@ -32,8 +32,7 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
   implicit val jsRunInfo = Json.format[RunningInfo]
   implicit val jsAppInfo = Json.format[AppInfo]
 
-  val projActor = ProjOnH2Actor(system)
-
+  val projActor = ProjOnH2Actor(system, Project.DDL().genQuerySession)
   val websocketDefaultRoom = WSRoom(system)
 
   def socket = WebSocket.accept[String, String] { request =>
