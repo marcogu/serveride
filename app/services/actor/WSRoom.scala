@@ -1,6 +1,6 @@
 package services.actor
 
-import akka.actor.{Props, ActorSystem, ActorRef, Actor}
+import akka.actor._
 import play.api.libs.json.JsValue
 import collection.mutable.{Map => MMap}
 
@@ -65,7 +65,21 @@ trait WebsocketRoom {
     newRoom
   }
 
+  /** Get sub room by name
+    * */
   def subRoom(name:String):Option[WebsocketRoom] = subrooms.get(name)
+
+  def removeSubroom(name:String) = {
+    val willDel = subRoom(name)
+    if(willDel.nonEmpty) willDel.get.descroy()
+  }
+
+  /** Override this method for custom destroy, release resources.
+    * */
+  def descroy():Unit = subrooms.foreach{ entry =>
+    entry._2.descroy()
+    roomActor ! PoisonPill
+  }
 }
 
 
