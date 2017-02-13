@@ -27,7 +27,8 @@ trait WebsocketRoom {
 
   /** Use it for generate Play socket Flow Actor Props Once a new socket connected.
     *
-    * @param socketSender The instance will handler Actor need to sent response message
+    * @param socketSender Socket response actor
+    * @param meberIdGen Handler actor name
     * */
   def inRoom(socketSender:ActorRef, meberIdGen:()=>String=()=>""):Props
 

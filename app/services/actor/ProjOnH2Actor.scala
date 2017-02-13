@@ -38,7 +38,6 @@ object ProjOnH2Actor {
 }
 
 
-//import collection.mutable.{Map=>MMap, Set=>MSet}
 class ProjOnH2Actor(implicit session:QuerySession) extends Actor {
   import ProjOnH2Actor._
 
