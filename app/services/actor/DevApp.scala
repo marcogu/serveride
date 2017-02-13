@@ -2,6 +2,7 @@ package services.actor
 
 import akka.actor.{Props, Actor}
 import models.Project
+import services.actor.RunningStdLog.Line
 import scala.sys.process._
 import scala.reflect.io.Path
 import language.postfixOps
@@ -86,4 +87,9 @@ object DevApp{
   case object GetInfo
   case class RunningInfo(sessionId:String, logId:String, logInfo:String)
   case class AppInfo(proj:Project, runing:Boolean, lastLogger:Option[RunningInfo])
+  case class ConsoleInfo(runningProj:Project, lineInfo:Line)
+
+  private var _appConsoleDispatcherActorPath = "/user/defaultWSRoom"
+  def setAppConsoleDispatcherActorPath(actorPath:String) = _appConsoleDispatcherActorPath = actorPath
+  def appConsoleDispatcherActorPath = _appConsoleDispatcherActorPath
 }

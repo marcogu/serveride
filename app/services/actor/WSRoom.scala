@@ -49,13 +49,21 @@ object WSRoom{
 
   private class WSRoom extends Actor{
     import collection.mutable.{Set=>MSet}
+    override def preStart(): Unit = {
+      println(self.path)
+    }
 
     val setIdx:MSet[ActorRef] = MSet()
 
+    // ---> remote it, client actor only support WSRoom defined message type, use JsValue instead
+    import services.actor.DevApp.ConsoleInfo
     def receive = {
       case MemberIn(actor) => setIdx.add(actor)
       case MemberOut(actor) => setIdx.remove(actor)
       case msg:JsValue => setIdx.foreach{ _ ! Publish(msg)}
+      // ---> remote it, client actor only support WSRoom defined message type, use JsValue instead
+      case ConsoleInfo(proj, info) =>
+        println(s"websocket room get running application console dispatch message:\n$info")
     }
   }
 
