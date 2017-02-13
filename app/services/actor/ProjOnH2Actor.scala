@@ -38,10 +38,10 @@ object ProjOnH2Actor {
 }
 
 
-import ProjOnH2Actor._
+
 //import collection.mutable.{Map=>MMap, Set=>MSet}
 class ProjOnH2Actor extends Actor {
-//  val runningProjs = MSet[String]()
+  import ProjOnH2Actor._
   implicit val session = Project.DDL().genQuerySession
 
   def receive = {

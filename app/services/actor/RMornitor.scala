@@ -5,7 +5,6 @@ import java.util.Date
 
 import akka.actor.{ActorRef, PoisonPill, Actor}
 import models.Project
-import services.actor.DevApp.ConsoleInfo
 import services.actor.ProjOnH2Actor.{Run, Stop}
 import services.actor.RunningStdLog.AllCached
 import scala.reflect.io.Path
@@ -58,7 +57,9 @@ class RMornitor(proj:Project) extends Actor{
   private def consoleP(in:InputStream):Unit = scala.io.Source.fromInputStream(in).getLines.foreach{ line =>
     val lineInfo = RunningStdLog.Line(Some(line), None)
     logactorRef.fold()(_ ! lineInfo )
-    context.actorSelection(DevApp.appConsoleDispatcherActorPath) ! ConsoleInfo(proj, lineInfo)
+
+//    import services.actor.DevApp.ConsoleInfo
+//    context.actorSelection(DevApp.appConsoleDispatcherActorPath) ! ConsoleInfo(proj, lineInfo)
   }
 
   private def determinProcess(p:Process):(Process, Integer) = try{ (p, tryGetPid(p)) } catch {

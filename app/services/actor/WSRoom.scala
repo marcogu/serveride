@@ -2,9 +2,7 @@ package services.actor
 
 import akka.actor.{Props, ActorSystem, ActorRef, Actor}
 import play.api.libs.json.JsValue
-//import akka.pattern.ask
-//import scala.concurrent.Future
-//import scala.concurrent.duration._
+import collection.mutable.{Map => MMap}
 
 
 /**
@@ -26,7 +24,8 @@ class RMMember(room:ActorRef, socketOut:ActorRef, roomId:String) extends Actor{
 }
 
 trait WebsocketRoom {
-  /** Once a new socket connected, use this function register a scoket event handler Actor
+
+  /** Use it for generate Play socket Flow Actor Props Once a new socket connected.
     *
     * @param socketSender The instance will handler Actor need to sent response message
     * */
@@ -37,11 +36,35 @@ trait WebsocketRoom {
     * @param actorId Child name of Room Actor context
     * @return if handler actor did find then finish it and return true, else return false
     */
-  def kick(actorId : String):Boolean
+  def kick(actorId : String):Boolean = false
 
-  def publishQuestion(msg:JsValue):Unit
+  def publishMessage(msg:JsValue):Unit = roomActor ! msg
 
+  /** This Actor is The Manager of 'Play socket Flow Actor', called Room
+    * It contain all socket Actor reference.
+    * Send Publish(JsValue) class instance when you want to publish a message
+    * */
   def roomActor:ActorRef
+
+  def subrooms:collection.Map[String, WebsocketRoom]
+
+  /** This function be designed for the only way to build a sub room, Please use subroom
+    * reference to generate an 'Websocket Flow Actor' to pay, and then the room will contain
+    * socket actor reference.
+    * */
+  def createSubRoom(name:String):WebsocketRoom = {
+    import akka.pattern.ask
+    import scala.concurrent.Await
+    import scala.concurrent.duration._
+    import WSRoom.{CreateRoom, RoomWrapper}
+    implicit val timeout: akka.util.Timeout = 2.seconds
+    val newRoom =
+      new RoomWrapper(Await.result((roomActor ? CreateRoom(name)).mapTo[CreateRoom], timeout.duration).roomActor)
+    subrooms.asInstanceOf[MMap[String, WebsocketRoom]].put(name, newRoom)
+    newRoom
+  }
+
+  def subRoom(name:String):Option[WebsocketRoom] = subrooms.get(name)
 }
 
 
@@ -55,32 +78,30 @@ object WSRoom{
 
     val setIdx:MSet[ActorRef] = MSet()
 
-    // ---> remote it, client actor only support WSRoom defined message type, use JsValue instead
-    import services.actor.DevApp.ConsoleInfo
     def receive = {
       case MemberIn(actor) => setIdx.add(actor)
       case MemberOut(actor) => setIdx.remove(actor)
       case msg:JsValue => setIdx.foreach{ _ ! Publish(msg)}
-      // ---> remote it, client actor only support WSRoom defined message type, use JsValue instead
-      case ConsoleInfo(proj, info) =>
-        println(s"websocket room get running application console dispatch message:\n$info")
+      case CreateRoom(name, null) => sender() ! CreateRoom(name, context.actorOf(Props(new WSRoom()), name))
     }
   }
 
 
   class RoomWrapper(val roomActor: ActorRef) extends WebsocketRoom {
+
+    private val subs:MMap[String, WebsocketRoom] = MMap()
+    override def subrooms = subs
+
     def inRoom(socketSender:ActorRef, meberIdGen:()=>String=()=>""):Props =
       Props(new RMMember(roomActor, socketSender, meberIdGen()))
-
-    def kick(actorId : String):Boolean = false
-
-    def publishQuestion(msg:JsValue) = roomActor ! msg
   }
 
 
   case class MemberIn(socket:ActorRef)
   case class MemberOut(socket:ActorRef)
   case class Publish(msg:JsValue)
+  case class CreateRoom(name:String, roomActor:ActorRef = null)
+//  case class SubRoom(name, actor)
 
 
   private var _defroom:Option[WebsocketRoom] = None
@@ -98,6 +119,3 @@ object WSRoom{
     throw new IllegalArgumentException("Need to perform 'apply()' once")
   )( df => df )
 }
-
-
-

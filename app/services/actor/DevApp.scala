@@ -2,7 +2,6 @@ package services.actor
 
 import akka.actor.{Props, Actor}
 import models.Project
-import services.actor.RunningStdLog.Line
 import scala.sys.process._
 import scala.reflect.io.Path
 import language.postfixOps
@@ -52,8 +51,7 @@ class DevApp(proj:Project) extends Actor{
   }
 
   private def forwardMornitor(cmd:AnyRef) = isValide match {
-    case true =>
-      context.child(actorName).fold(context.actorOf(Props(new RMornitor(proj)), actorName).forward(cmd))(_.forward(cmd))
+    case true => context.child(actorName).getOrElse(context.actorOf(Props(new RMornitor(proj)), actorName)).forward(cmd)
     case false => sender() ! "application is not be create"
   }
 
@@ -82,14 +80,10 @@ object DevApp{
   val (script, template) = (selfRoot / "public/playprojcr/playg.sh", selfRoot / "public/playprojcr/tpfolder")
   val runscript = selfRoot / "public/apprunscript/sbtrunplay.sh"
 
-//  case object Info // is Newed
-//  case class Files(filter:String, extentions:String)
   case object GetInfo
   case class RunningInfo(sessionId:String, logId:String, logInfo:String)
   case class AppInfo(proj:Project, runing:Boolean, lastLogger:Option[RunningInfo])
-  case class ConsoleInfo(runningProj:Project, lineInfo:Line)
 
-  private var _appConsoleDispatcherActorPath = "/user/defaultWSRoom"
-  def setAppConsoleDispatcherActorPath(actorPath:String) = _appConsoleDispatcherActorPath = actorPath
-  def appConsoleDispatcherActorPath = _appConsoleDispatcherActorPath
+//  import services.actor.RunningStdLog.Line
+//  case class ConsoleInfo(runningProj:Project, lineInfo:Line)
 }

@@ -61,16 +61,28 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     (projActor ? Named(name)).mapTo[AppInfo].map{ info => Ok(Json.toJson(info))}
   }
 
-  def runapp(name:String) = Action.async { appCmdHelper(Run(name))}
-  def stopapp(name:String) = Action.async { appCmdHelper(Stop(name))}
+  def runapp(name:String) = Action.async { appCmdHelper(Run(name)){ isRepeate =>
+    if(!isRepeate) {
+      websocketDefaultRoom.createSubRoom(name)
+    }
+  }}
 
-  def appCmdHelper(cmd:AnyRef):Future[Result] = (projActor ? cmd).collect{
-    case result:RunningInfo => Ok(Json.toJson(result))
-    case areadyRun:AppInfo =>  Ok(Json.toJson(areadyRun))
+  def stopapp(name:String) = Action.async { appCmdHelper(Stop(name)){ isRepeate =>
+    if(!isRepeate) null
+  }}
+
+  def appCmdHelper(cmd:AnyRef)(preHandler:(Boolean)=>Unit):Future[Result] = (projActor ? cmd).collect{
+    case result:RunningInfo => preHandler(false)
+      Ok(Json.toJson(result))
+    case areadyRun:AppInfo => preHandler(true)
+      Ok(Json.toJson(areadyRun))
   }
 
   def consoleScreen(runningProjName:String) = Action.async {
-    (projActor ? Console(runningProjName)).map{ r=> Ok(r.toString)}
+    (projActor ? Console(runningProjName)).map{ r=>
+//      websocketDefaultRoom.subRoom(runningProjName)
+      Ok(r.toString)
+    }
   }
 
   // TODO: finish it
