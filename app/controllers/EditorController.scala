@@ -20,7 +20,7 @@ import scala.reflect.io.Path
 import akka.pattern.ask
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import models.reqarg._
+import models.reqarg.JSFormatImplicit._
 
 
 /**

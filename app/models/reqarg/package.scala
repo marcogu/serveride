@@ -28,7 +28,9 @@ package object reqarg {
     def queryMainKey(psam:String)(implicit db:Map[String, String]) = "9D37F2AF79A3B42F9D37F2AF79A3B42F"
   }
 
-  implicit val jsProj = Json.format[Project]
-  implicit val jsRunInfo = Json.format[RunningInfo]
-  implicit val jsAppInfo = Json.format[AppInfo]
+  object JSFormatImplicit {
+    implicit val jsProj = Json.format[Project]
+    implicit val jsRunInfo = Json.format[RunningInfo]
+    implicit val jsAppInfo = Json.format[AppInfo]
+  }
 }
