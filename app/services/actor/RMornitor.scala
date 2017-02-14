@@ -20,7 +20,7 @@ class RMornitor(proj:Project) extends Actor{
   def receive = {
     case DevApp.GetInfo =>
       sender() ! DevApp.AppInfo(proj, processing!=null, genLog("state"))
-    case Run(strPath) => sender() ! excSbtrun(scriptToCmd(Path(strPath)))
+    case Run(strPath, consoleHandler) => sender() ! excSbtrun(scriptToCmd(Path(strPath)), consoleHandler)
     case Stop(_) => sender() ! stopSbtRun()
     case AllCached => logactorRef.fold()(_.forward(AllCached))
   }
@@ -32,10 +32,10 @@ class RMornitor(proj:Project) extends Actor{
     case (process, pid) => Some(DevApp.RunningInfo(s"${processing._2}", logId, ""))
   }
 
-  private def excSbtrun(cmd:String):DevApp.RunningInfo = {
+  private def excSbtrun(cmd:String, ch:ConsoleHandler):DevApp.RunningInfo = {
     processing = determinProcess(cmd.run(new ProcessIO( o=> Unit, stdin=>consoleP(stdin), ein=>consoleP(ein))))
     stopLogMonitor()
-    logactorRef = Some(context.actorOf(RunningStdLog.props(genLogerFile(proj.root, processing._2.toLong)), "loger"))
+    logactorRef = Some(context.actorOf(RunningStdLog.props(genLogerFile(proj.root, processing._2.toLong), ch), "loger"))
     DevApp.RunningInfo(s"${processing._2}","run",s"$cmd")
   }
 
@@ -57,9 +57,6 @@ class RMornitor(proj:Project) extends Actor{
   private def consoleP(in:InputStream):Unit = scala.io.Source.fromInputStream(in).getLines.foreach{ line =>
     val lineInfo = RunningStdLog.Line(Some(line), None)
     logactorRef.fold()(_ ! lineInfo )
-
-//    import services.actor.DevApp.ConsoleInfo
-//    context.actorSelection(DevApp.appConsoleDispatcherActorPath) ! ConsoleInfo(proj, lineInfo)
   }
 
   private def determinProcess(p:Process):(Process, Integer) = try{ (p, tryGetPid(p)) } catch {

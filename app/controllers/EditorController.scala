@@ -14,6 +14,7 @@ import services.actor.DevApp.{RunningInfo, AppInfo}
 import services.actor.{RMMember, WSRoom, ProjOnH2Actor}
 import services.actor.ProjOnH2Actor._
 import services.inspection.AppEnv
+import services.actor.ConsoleDispatcher
 import play.api.mvc._
 import scala.concurrent.Future
 import scala.reflect.io.Path
@@ -33,8 +34,11 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
   val projActor = ProjOnH2Actor(system, Project.DDL().genQuerySession)
   val websocketDefaultRoom = WSRoom(system)
 
-  def socket = WebSocket.accept[String, String] { request =>
-    ActorFlow.actorRef { out => websocketDefaultRoom.inRoom(out)}
+  def subscriptConsole(proj:String) = WebSocket.acceptOrResult[String, String] { req =>
+    Future.successful(websocketDefaultRoom.subRoom(proj) match {
+      case None => Left(NotFound)
+      case Some(room) => Right(ActorFlow.actorRef( out => room.inRoom(out)) )
+    })
   }
 
   def editorView(path:String = null) = {
@@ -58,14 +62,17 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     (projActor ? Named(name)).mapTo[AppInfo].map{ info => Ok(Json.toJson(info))}
   }
 
-  def runapp(name:String) = Action.async { appCmdHelper(Run(name)){ isRepeate =>
+  def runapp(name:String) = Action.async { appCmdHelper(Run(name, ConsoleDispatcher(name))){ isRepeate =>
     if(!isRepeate) {
       websocketDefaultRoom.createSubRoom(name)
     }
   }}
 
   def stopapp(name:String) = Action.async { appCmdHelper(Stop(name)){ isRepeate =>
-    if(!isRepeate) null
+    if(!isRepeate){
+      println(s"will stop room $name")
+      websocketDefaultRoom.removeSubroom(name)
+    } 
   }}
 
   def appCmdHelper(cmd:AnyRef)(preHandler:(Boolean)=>Unit):Future[Result] = (projActor ? cmd).collect{
@@ -75,7 +82,7 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
       Ok(Json.toJson(areadyRun))
   }
 
-  def consoleScreen(runningProjName:String) = Action.async {
+  def consoleScreen(runningProjName:String) = Action.async { // test method
     (projActor ? Console(runningProjName)).map{ r=>
 //      websocketDefaultRoom.subRoom(runningProjName)
       Ok(r.toString)

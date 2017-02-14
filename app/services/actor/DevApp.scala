@@ -27,9 +27,9 @@ class DevApp(proj:Project) extends Actor{
 
   def receive = {
     case Named(_) | NewProj(_, _) => check()
-    case Run(_) => running match {
+    case Run(_, consoleHandler) => running match {
       case true => check()
-      case false => running = true; forwardMornitor(Run(DevApp.runscript.path))
+      case false => running = true; forwardMornitor(Run(DevApp.runscript.path, consoleHandler))
     }
 
     case cmd:Stop => running match {

@@ -17,20 +17,22 @@ package object actor {
   }
 
 
-  class CDispatcher(room:WebsocketRoom) extends ConsoleHandler{
+  class CDispatcher(roomName:String) extends ConsoleHandler{
     private var logPath:Option[String] = None
 
     def setLogFile(path:String) = if(logPath.isEmpty) logPath = Some(path)
     def logFile = logPath.get
 
-    def consoleRecieve(line:Line):Unit = {
-      import models.reqarg.JSFormatImplicit._
-      room.publishMessage( Json.toJson(line) )
+    import models.reqarg.JSFormatImplicit._
+    def consoleRecieve(line:Line):Unit = WSRoom.default.subRoom(roomName) match {
+      case Some(topic) => topic.publishMessage( line.content.get )
+        // topic.publishMessage( Json.toJson(line) )
+      case None => 
     }
   }
 
 
   object ConsoleDispatcher{
-    def apply(room:WebsocketRoom):ConsoleHandler = new CDispatcher(room)
+    def apply(projName:String):ConsoleHandler = new CDispatcher(projName)
   }
 }

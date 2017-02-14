@@ -12,10 +12,16 @@ class RMMember(room:ActorRef, socketOut:ActorRef, roomId:String) extends Actor{
   import services.actor.WSRoom._
 
   override def preStart(): Unit = room ! MemberIn(self)
-  override def postStop(): Unit = room ! MemberOut(self)
+  override def postStop(): Unit = if(!isKillSelf) room ! MemberOut(self)
+
+  var isKillSelf = false
 
   def receive = {
     case Publish(msg) => socketOut ! msg
+    case RoomClose => isKillSelf = true
+      self ! PoisonPill 
+      println(s"try close websocket actor")
+
     case msg: JsValue => println(msg)
     case msg: String => println(self.path) //  socketOut ! "my name is marco"
     case msg: Array[Byte] => println(msg.length);
@@ -39,7 +45,7 @@ trait WebsocketRoom {
     */
   def kick(actorId : String):Boolean = false
 
-  def publishMessage(msg:JsValue):Unit = roomActor ! msg
+  def publishMessage(msg:AnyRef):Unit = roomActor ! msg
 
   /** This Actor is The Manager of 'Play socket Flow Actor', called Room
     * It contain all socket Actor reference.
@@ -69,17 +75,17 @@ trait WebsocketRoom {
     * */
   def subRoom(name:String):Option[WebsocketRoom] = subrooms.get(name)
 
-  def removeSubroom(name:String) = {
-    val willDel = subRoom(name)
-    if(willDel.nonEmpty) willDel.get.descroy()
+  def removeSubroom(name:String) = subRoom(name) match {
+    case None =>
+    case Some(wrapper) => wrapper.destroy(); println(s"sub room did found")
   }
 
   /** Override this method for custom destroy, release resources.
     * */
-  def descroy():Unit = subrooms.foreach{ entry =>
-    entry._2.descroy()
-    roomActor ! PoisonPill
-  }
+  def destroy():Unit = {subrooms.foreach{ entry =>
+    println(s"roomActor ${roomActor.path} destroy()")
+    entry._2.destroy() 
+  }; roomActor ! PoisonPill}
 }
 
 
@@ -87,16 +93,15 @@ object WSRoom{
 
   private class WSRoom extends Actor{
     import collection.mutable.{Set=>MSet}
-    override def preStart(): Unit = {
-      println(self.path)
-    }
 
-    val setIdx:MSet[ActorRef] = MSet()
+    override def postStop(): Unit = clients.foreach { client => client ! RoomClose }
+    val clients:MSet[ActorRef] = MSet()
 
     def receive = {
-      case MemberIn(actor) => setIdx.add(actor)
-      case MemberOut(actor) => setIdx.remove(actor)
-      case msg:JsValue => setIdx.foreach{ _ ! Publish(msg)}
+      case MemberIn(actor) => clients.add(actor)
+      case MemberOut(actor) => clients.remove(actor)
+      case msg:JsValue => clients.foreach{ _ ! Publish(msg)}
+      case str:String => clients.foreach{ _ ! Publish(str)}
       case CreateRoom(name, null) => sender() ! CreateRoom(name, context.actorOf(Props(new WSRoom()), name))
     }
   }
@@ -114,9 +119,9 @@ object WSRoom{
 
   case class MemberIn(socket:ActorRef)
   case class MemberOut(socket:ActorRef)
-  case class Publish(msg:JsValue)
+  case object RoomClose
+  case class Publish(obj:AnyRef) // [JsValue | String]
   case class CreateRoom(name:String, roomActor:ActorRef = null)
-//  case class SubRoom(name, actor)
 
 
   private var _defroom:Option[WebsocketRoom] = None

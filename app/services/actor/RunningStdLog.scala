@@ -9,18 +9,23 @@ import scala.reflect.io.Path
 /**
   * Created by marco on 2017/2/8.
   */
-class RunningStdLog(logName:Path) extends Actor{
+class RunningStdLog(logName:Path, consoleHandler:ConsoleHandler) extends Actor{
   val writer = new PrintWriter(logName.path, RunningStdLog.logFileEncode)
   var lnum = 0
 
   val logCacher = MMap[Int, String]()
-
   import RunningStdLog._
+  val excDispatch:(Line)=>Unit = consoleHandler match {
+    case null => line => null
+    case _ => consoleHandler.setLogFile(logName.name)
+      consoleHandler.consoleRecieve
+  }
+
   def receive = {
     case Line(Some(lcontent), None) => lnum += 1
-      logCacher.put(lnum, lcontent)
       writer.println(lcontent)
       writer.flush()
+      excDispatch(Line(Some(lcontent), Some(lnum)))
 
     case Line(None, Some(idx)) => sender() ! numberLineFormCache(fitLen(idx))
     case MaxLineNum => sender() ! LRange(0, lnum)
@@ -52,7 +57,7 @@ object RunningStdLog{
   case class LRange(startNo:Int = 1, endNo:Int)
   case class Lines(ls:Seq[Line], r:LRange)
 
-  def props(logfile:Path) = Props(new RunningStdLog(logfile))
+  def props(logfile:Path, consoleHandler:ConsoleHandler) = Props(new RunningStdLog(logfile, consoleHandler))
 
   import scala.io.Source
   // Util method

@@ -32,7 +32,7 @@ object ProjOnH2Actor {
   case class Named(pname:String) extends NamedProject
   case class NewProj(pname:String, path:String) extends NamedProject
   case class Files(pname:String, extension:String) extends NamedProject
-  case class Run(pname:String) extends NamedProject
+  case class Run(pname:String, consoleDispatcher:ConsoleHandler) extends NamedProject
   case class Stop(pname:String) extends NamedProject
   case class Console(pname:String) extends NamedProject
 }
