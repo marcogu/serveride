@@ -20,6 +20,7 @@ import scala.reflect.io.Path
 import akka.pattern.ask
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import models.reqarg._
 
 
 /**
@@ -27,11 +28,8 @@ import scala.concurrent.duration._
   */
 @Singleton
 class EditorController @Inject() (implicit system:ActorSystem, materializer: Materializer) extends Controller{
-  implicit val timeout: akka.util.Timeout = 5.seconds
-  implicit val jsProj = Json.format[Project]
-  implicit val jsRunInfo = Json.format[RunningInfo]
-  implicit val jsAppInfo = Json.format[AppInfo]
 
+  implicit val timeout: akka.util.Timeout = 5.seconds
   val projActor = ProjOnH2Actor(system, Project.DDL().genQuerySession)
   val websocketDefaultRoom = WSRoom(system)
 

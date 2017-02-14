@@ -2,6 +2,8 @@ package models
 
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.libs.json.Json
+import services.actor.DevApp.{AppInfo, RunningInfo}
 
 /**
   * Created by marco on 2017/1/11.
@@ -25,4 +27,8 @@ package object reqarg {
   object MockMkQuery{
     def queryMainKey(psam:String)(implicit db:Map[String, String]) = "9D37F2AF79A3B42F9D37F2AF79A3B42F"
   }
+
+  implicit val jsProj = Json.format[Project]
+  implicit val jsRunInfo = Json.format[RunningInfo]
+  implicit val jsAppInfo = Json.format[AppInfo]
 }
