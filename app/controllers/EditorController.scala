@@ -42,6 +42,7 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
   }
 
   def editorView(path:String = null) = {
+    println(s"get load request with path $path")
     val pageInfo = path match {
       case null | "" =>  CodeMirrorModeInfo(Path(""))
       case other => CodeMirrorModeInfo(Path(URLDecoder.decode(path, "UTF-8")))

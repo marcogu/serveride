@@ -10,6 +10,7 @@ case class CodeMirrorModeInfo(filePath:Path){
   private val cssurls:MSeq[String] = MSeq("/assets/javascripts/codemirro5-23-0/codemirror.css",
     "/assets/javascripts/codemirro5-23-0/theme/ambiance.css",
     "/assets/lib/bootstrap/css/bootstrap.min.css",
+    "/assets/stylesheets/templatemo_main.css",
     "/assets/stylesheets/angular-motion-0.4.4.css")
   private var jsurls = MSeq(
     "/assets/javascripts/angular-1.4.4/angular.min.js",
