@@ -13,6 +13,7 @@ case class CodeMirrorModeInfo(filePath:Path){
     "/assets/stylesheets/templatemo_main.css",
     "/assets/stylesheets/angular-motion-0.4.4.css")
   private var jsurls = MSeq(
+    "/assets/javascripts/jquery-3.1.1.js",
     "/assets/javascripts/angular-1.4.4/angular.min.js",
     "/assets/javascripts/angular-1.4.4/angular-route.min.js",
     "/assets/javascripts/angular-1.4.4/angular-animate.min.js",
