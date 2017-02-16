@@ -1,0 +1,16 @@
+@import tags.treeitem
+@import services.actor.DevApp.SourcePath
+
+@(titem:SourcePath)
+
+
+<div id="hello" class="tree" style="width: 260px; padding-left: 0px;">
+    <hk></hk>
+    <ul>
+        @if(titem.subs.nonEmpty && titem.subs.get.nonEmpty){
+            @for(sub <- titem.subs.get) {
+                @treeitem(sub)
+            }
+        }
+    </ul>
+</div>

@@ -1,0 +1,11 @@
+@import services.actor.DevApp.SourcePath
+
+@(titem:SourcePath)
+
+
+    @if(titem.isFile){
+    <li class="treeleaf" id="@titem.fname" data-mypath="@titem.rpath"><span><i class="icon-calendar"></i>@titem.fname</span></li>
+    } else {
+    <li id="@titem.fname" data-mypath="@titem.rpath"><a href=""><span><i class="icon-calendar"></i>@titem.fname</span></a>
+        <ul></ul></li>
+    }

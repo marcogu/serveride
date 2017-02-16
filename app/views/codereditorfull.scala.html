@@ -33,111 +33,9 @@
 
 		<!--<div style="padding-top: 50px;">  navbar-collapse collapse templatemo-sidebar -->
 	<div class="template-page-wrapper">
-		<div class="navbar-collapse collapse templatemo-sidebar " >
-			<div class="tree" style="width: 260px; padding-left: 0px;" > <!-- style="background-color: #4D344A" -->
-			<ul>
-				<li >
-					<span><i class="icon-calendar"></i> controllers</span>
-					<ul>
-						<li >
-							<span><i class="icon-minus-sign">somepackageone</i></span>
-							<ul>
-								<li>
-									<a href=""><span><i class="icon-time">FirstController.scala</i> </span></a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<span><i class="icon-minus-sign">somepackagetwo</i></span>
-							<ul>
-								<li>
-									<a href=""><span><i class="icon-time"></i>EditorController.scala</span></a>
-								</li>
-								<li>
-									<a href=""><span><i class="icon-time"></i> Application.scala</span></a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<span><i class="icon-minus-sign"></i>app</span>
-							<ul>
-								<li>
-									<a href=""><span><i class="icon-time"></i>package.scala</span></a>
-								</li>
-								<li>
-									<a href=""><span><i class="icon-time"></i>SeipwerRequestInfo.scala</span></a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<span><i class="icon-minus-sign"></i> public</span>
-							<ul>
-								<li>
-									<a href=""><span><i class="icon-time"></i> ProjOnH2Actor.scala</span></a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-				<li>
-					<span><i class="icon-calendar"></i>com</span>
-					<ul >
-						<li>
-							<span><i class="icon-minus-sign"></i>marco</span>
-							<ul >
-								<li>
-									<span><i class="icon-minus-sign"></i>server</span>
-									<ul>
-										<li>
-											<span><i class="icon-minus-sign"></i>server</span>
-											<ul>
-												<li>
-													<span><i class="icon-minus-sign"></i>ideui</span>
-													<ul>
-														<li>
-															<a href=""><span><i class="icon-time"></i> codeereditorfull.scala.html</span></a>
-														</li>
-														<li>
-															<a href=""><span><i class="icon-time"></i> RunningStdLog.scala</span></a>
-														</li>
-													</ul>
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</li>
-								<li>
-									<a href=""><span><i class="icon-time"></i>DevApp.scala</span></a>
-								</li>
-								<li>
-									<a href=""><span><i class="icon-time"></i>SwiperToolController.scala</span></a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</li>
-			</ul>
-			</div>
-			<script type="text/javascript">
-					$(function(){
-//						console.log($('.tree li:has(ul)'));
-						$('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
-						$('.tree li.parent_li > span').on('click', function (e) {
-							var children = $(this).parent('li.parent_li').find(' > ul > li');
-							if (children.is(":visible")) {
-								children.hide('fast');
-								$(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
-							} else {
-								children.show('fast');
-								$(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
-							}
-							e.stopPropagation();
-						});
-					});
-			</script>
+		<div class="navbar-collapse collapse templatemo-sidebar">
+			<div id="divFileStruct" ng-bind-html="treeContent"></div>
 		</div>
-
-
 
 		<div class="templatemo-content-wrapper">
 			<div class="templatemo-content">
@@ -152,13 +50,15 @@
 					@fileContent
 					</textarea>
 				</div>
-
-				@*<div></div>*@
-
 			</div>
 		</div>
-
-
-	</div> <!--  -->
+	</div>
 </div>
+
+	<script type="text/javascript" src="/assets/javascripts/editor/jqueryparttern.js"> </script>
+
+		<!--
+<script type="text/javascript">
+</script>
+-->
 }

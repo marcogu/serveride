@@ -94,6 +94,18 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     }
   }
 
+  def tv = Action.async { // test method
+    (projActor ? listCmd("autotoolt6", "")).mapTo[SourcePath].map { r=>
+      Ok(views.html.treeview(r))
+    }
+  }
+
+  def subs = Action.async {
+    (projActor ? listCmd("autotoolt6", "app")).mapTo[SourcePath].map { r =>
+      Ok(views.html.tags.treeitem(r))
+    }
+  }
+
   // TODO: finish it
   def save(path:String) = Action(parse.tolerantText){ implicit req =>
     Logger.debug(s"${req.body}")

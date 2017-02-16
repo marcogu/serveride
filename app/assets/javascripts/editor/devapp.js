@@ -22,6 +22,8 @@ app.controller('EditorController', function ($scope,$http, $location, $modal) {
     $scope.currentEditor = null;
     $scope.cmtype = "text/x-scala";
 
+    $scope.treeContent = "";
+
     $scope.loadDefaultCodeFile = function(){
         console.log("init");
         $http.get("/scode/all").success(function(data,state,header){
@@ -48,7 +50,7 @@ app.controller('EditorController', function ($scope,$http, $location, $modal) {
 
     $scope.reload = function(){
         if($scope.selectedScode == null) return;
-        console.log($scope.selectedScode)
+        console.log($scope.selectedScode);
         // var encodedPath = encodeURIComponent($scope.selectedScode[1]);
         //window.open("/editor/"+encodedPath);
         // window.location.href = "/editor/" + encodedPath;
@@ -59,12 +61,26 @@ app.controller('EditorController', function ($scope,$http, $location, $modal) {
         var content = $scope.currentEditor.getValue();
         var postUrl = "/editor/save/" + encodeURIComponent(txaEle.dataset.mpath);
         $http.post(postUrl, content).success(function(data, state, header){
-            console.log("save got response:" + data);
+            //console.log("save got response:" + data);
         });
+    };
+
+    $scope.initProjStruct = function(){
+        // "http://localhost:9527/proj/autotoolt6/scode/list"
+        //$http.get("/tv").success(function(data){
+            //$scope.treeContent = data;
+            //console.log(data);
+        //})
+    };
+
+    $scope.treeAdded = function(){
+        console.log("tree added");
     };
 
     // var myOtherModal = $modal({scope: $scope, template: "view/siwpertestcase", show: false});
     $scope.showModel = function(){ //"/view/siwpertestcase"
         // myOtherModal.$promise.then(myOtherModal.show);
     };
+
+    $scope.initProjStruct();
 });
