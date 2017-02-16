@@ -42,7 +42,14 @@ class DevApp(proj:Project) extends Actor{
       case true => forwardMornitor(services.actor.RunningStdLog.AllCached)
       case false =>
     }
+
+    case PathList(_, SourcePath(rp, isD, _)) => sender() ! SourcePath(rp, isD, Some(listRoot(rp)))
   }
+
+  def listRoot(spec:String) = (proj.root / spec).jfile.listFiles.map{ f =>
+    SourcePath(proj.root.relativize(f.getCanonicalPath).path, f.isDirectory, None)
+  }
+
 
   private def check() = isValide match {
     case true => forwardMornitor(GetInfo)
@@ -83,6 +90,9 @@ object DevApp{
   case object GetInfo
   case class RunningInfo(sessionId:String, logId:String, logInfo:String)
   case class AppInfo(proj:Project, runing:Boolean, lastLogger:Option[RunningInfo])
+  case class SourcePath(rpath: String, isFile: Boolean, subs: Option[Seq[SourcePath]])
+
+//  object SourcePath { import models.reqarg.JSFormatImplicit._ }
 
 //  import services.actor.RunningStdLog.Line
 //  case class ConsoleInfo(runningProj:Project, lineInfo:Line)

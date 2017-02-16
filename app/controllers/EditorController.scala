@@ -10,7 +10,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
 import play.api.libs.streams.ActorFlow
 import play.api.mvc.Controller
-import services.actor.DevApp.{RunningInfo, AppInfo}
+import services.actor.DevApp.{SourcePath, RunningInfo, AppInfo}
 import services.actor.{RMMember, WSRoom, ProjOnH2Actor}
 import services.actor.ProjOnH2Actor._
 import services.inspection.AppEnv
@@ -81,6 +81,10 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
       Ok(Json.toJson(result))
     case areadyRun:AppInfo => preHandler(true)
       Ok(Json.toJson(areadyRun))
+  }
+
+  def listSub(proj:String, relativePath:String) = Action.async{
+    (projActor ? listCmd(proj, relativePath)).mapTo[SourcePath].map { r => Ok(Json.toJson(r)) } //
   }
 
   def consoleScreen(runningProjName:String) = Action.async { // test method

@@ -27,6 +27,7 @@ object ProjOnH2Actor {
   }
 
 
+  import services.actor.DevApp.SourcePath
   case object All
 
   case class Named(pname:String) extends NamedProject
@@ -35,6 +36,9 @@ object ProjOnH2Actor {
   case class Run(pname:String, consoleDispatcher:ConsoleHandler) extends NamedProject
   case class Stop(pname:String) extends NamedProject
   case class Console(pname:String) extends NamedProject
+  case class PathList(pname:String, specPath:SourcePath) extends NamedProject
+
+  def listCmd(proj:String, container:String):PathList = PathList(proj, SourcePath(container, false, None) )
 }
 
 

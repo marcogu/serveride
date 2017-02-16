@@ -38,6 +38,7 @@ GET		/proj/new/:n/:url 			controllers.EditorController.registerProj(n:String, ur
 GET     /proj/run/:n                controllers.EditorController.runapp(n)
 GET     /proj/stop/:n               controllers.EditorController.stopapp(n)
 GET     /proj/console/:n            controllers.EditorController.consoleScreen(n)
+GET     /proj/:p/scode/list/:rpp    controllers.EditorController.listSub(p, rpp)
 
 #GET     /scode/gen/:n               controllers.EditorController.genproj(n)
 
