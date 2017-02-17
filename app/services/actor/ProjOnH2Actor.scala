@@ -49,6 +49,8 @@ class ProjOnH2Actor(implicit session:QuerySession) extends Actor {
     case All => sender() ! Project.all
     case NewProj(n, p) => forwardProjActor(Named(p))( _ => context.actorOf(DevApp.props(Project.newProj(n, p)), n))
     case pcmd:NamedProject => forwardProjActor(pcmd)(actorFromQuery)
+
+    case DevApp.AppInfo(proj, isRuning, runInfo) => println(s"$proj, $isRuning, $runInfo")
   }
 
   private def forwardProjActor(cmd:NamedProject)(projActorCreator:(String)=>ActorRef):Unit = {

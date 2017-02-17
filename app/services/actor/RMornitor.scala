@@ -20,8 +20,14 @@ class RMornitor(proj:Project) extends Actor{
   def receive = {
     case DevApp.GetInfo =>
       sender() ! DevApp.AppInfo(proj, processing!=null, genLog("state"))
+
     case Run(strPath, consoleHandler) => sender() ! excSbtrun(scriptToCmd(Path(strPath)), consoleHandler)
-    case Stop(_) => sender() ! stopSbtRun()
+      context.actorSelection(self.path.parent.parent) ! DevApp.AppInfo(proj, processing!=null, genLog("state"))
+
+    case Stop(_) => val stopmsg = stopSbtRun()
+      sender() ! stopmsg.getOrElse(DevApp.RunningInfo("", "", "not running"))
+      context.actorSelection(self.path.parent.parent) ! DevApp.AppInfo(proj, processing!=null, stopmsg)
+
     case AllCached => logactorRef.fold()(_.forward(AllCached))
   }
 
@@ -44,12 +50,12 @@ class RMornitor(proj:Project) extends Actor{
   //    A.1 Make a variable to reference ProcessIO output stream
   //    A.2 Close this output stream that when you want terminate the process.
   // stop method B, for make sure the process been kill.
-  private def stopSbtRun() = if( processing != null) {
-    val stopInfo = s"process ${processing._2} was terminated"
-    processing._1.destroy()
-    processing = null
-    stopLogMonitor()
-    DevApp.RunningInfo("test","test", stopInfo)
+  private def stopSbtRun():Option[DevApp.RunningInfo] = processing match {
+    case null => None
+    case (process, pid) => processing = null
+      process.destroy()
+      stopLogMonitor()
+      Some(DevApp.RunningInfo(pid.toString, "stop", s"process $pid was terminated"))
   }
 
   // Process Callback thread and Actor thread is probably not the same, So
