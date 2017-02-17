@@ -4,8 +4,20 @@
 
 
     @if(titem.isFile){
-    <li class="treeleaf" id="@titem.fname" data-mypath="@titem.rpath"><span><i class="icon-calendar"></i>@titem.fname</span></li>
+    <li>
+    	<a href="">
+    		<span data-spath="@titem.rpath">
+    			<i class="icon-calendar"></i>
+    			@titem.fname
+    		</span>
+    	</a>
+    </li>
     } else {
-    <li id="@titem.fname" data-mypath="@titem.rpath"><a href=""><span><i class="icon-calendar"></i>@titem.fname</span></a>
-        <ul></ul></li>
-    }
+    <li>
+    	<span data-spath="@titem.rpath" data-treenode>
+    		<i class="icon-calendar"></i>
+    		@titem.fname
+    	</span>
+        <ul class="@titem.fname"></ul>
+    </li>
+}

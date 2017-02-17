@@ -84,12 +84,17 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
   }
 
   def listSub(proj:String, relativePath:String) = Action.async{
-    (projActor ? listCmd(proj, relativePath)).mapTo[SourcePath].map { r => Ok(Json.toJson(r)) } //
+    (projActor ? listCmd(proj, relativePath)).mapTo[SourcePath].map { r => Ok(Json.toJson(r)) }
   }
+
+  def listSubView(proj:String, relativePath:String) = Action.async {
+    (projActor ? listCmd(proj, relativePath)).mapTo[SourcePath].map { r => 
+      Ok(views.html.treeview(r))
+    }
+  }     
 
   def consoleScreen(runningProjName:String) = Action.async { // test method
     (projActor ? Console(runningProjName)).map{ r=>
-//      websocketDefaultRoom.subRoom(runningProjName)
       Ok(r.toString)
     }
   }
@@ -100,7 +105,7 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     }
   }
 
-  def subs = Action.async {
+  def subs = Action.async { // test method
     (projActor ? listCmd("autotoolt6", "app")).mapTo[SourcePath].map { r =>
       Ok(views.html.tags.treeitem(r))
     }

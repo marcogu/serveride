@@ -53,7 +53,7 @@ class DevApp(proj:Project) extends Actor{
   }
 
   def listRoot(spec:String) = (proj.root / spec).jfile.listFiles.map{ f =>
-    SourcePath(proj.root.relativize(f.getCanonicalPath).path, f.isDirectory, None)
+    SourcePath(proj.root.relativize(f.getCanonicalPath).path, f.isFile, None)
   }
 
 //  def allstructs(parentFile:JFile, c:SourcePath):Unit = parentFile.listFiles.foreach{ f => f.isDirectory match{
