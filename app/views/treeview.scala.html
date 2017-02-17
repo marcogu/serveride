@@ -4,7 +4,7 @@
 @(titem:SourcePath)
 
 @if(titem.rpath.isEmpty){
-<div id="hello" class="tree" style="width: 260px; padding-left: 0px;">
+
 	<ul>	
 }
     @if(titem.subs.nonEmpty && titem.subs.get.nonEmpty){
@@ -14,7 +14,6 @@
     }
 @if(titem.rpath.isEmpty){
 	</ul>
-</div>
 }
 
     

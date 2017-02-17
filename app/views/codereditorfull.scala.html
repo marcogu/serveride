@@ -31,16 +31,19 @@
 		</div>
 	</div>
 
-		<!--<div style="padding-top: 50px;">  navbar-collapse collapse templatemo-sidebar -->
+	<!-- content -->
 	<div class="template-page-wrapper">
-		<div class="navbar-collapse collapse templatemo-sidebar">
-			<div id="divFileStruct" ng-bind-html="treeContent"></div>
+		<!-- left side bar  -->
+		<div class="navbar-collapse collapse templatemo-sidebar"> <!--  -->
+			<!-- tree view for select file to edit -->
+			<div id="divFileStruct" class="tree" style="width: 260px;">
+
+	
+			</div>
+
 		</div>
-
-		<div class="templatemo-content-wrapper">
-			<div class="templatemo-content">
-
-				<div id="divEditorContainer" style="height: 650px; width: 100%;"> <!--  -->
+		<!-- code edit area -->
+		<div id="divEditorContainer" style="position: absolute; bottom: 0px; top: 50px; right:0px; left: 260px;"> <!-- height: 200px; width: 100%; -->
 					<style type="text/css">
 					.CodeMirror {
 					height: 100%;
@@ -50,8 +53,6 @@
 					@fileContent
 					</textarea>
 				</div>
-			</div>
-		</div>
 	</div>
 </div>
 
