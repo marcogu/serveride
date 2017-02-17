@@ -44,13 +44,28 @@ object ProjOnH2Actor {
 
 class ProjOnH2Actor(implicit session:QuerySession) extends Actor {
   import ProjOnH2Actor._
+  import DevApp.{AppInfo, RunningInfo}
+  import collection.mutable.{Map=>Mmap}
+
+  private val runingActor:Mmap[String, Int] = Mmap()
 
   def receive = {
-    case All => sender() ! Project.all
+    case All => sender() ! allProj()
     case NewProj(n, p) => forwardProjActor(Named(p))( _ => context.actorOf(DevApp.props(Project.newProj(n, p)), n))
     case pcmd:NamedProject => forwardProjActor(pcmd)(actorFromQuery)
+    // this message from RMornitor actor, when the project run or stop.
+    case AppInfo(proj, isRuning, runInfo) => isRuning match {
+      case false => runingActor.remove(proj.pname)
+      case true => val pid = runInfo.fold(-1)(rinfo => rinfo.sessionId.toInt)
+        runingActor.put(proj.pname, pid)
+    }
+  }
 
-    case DevApp.AppInfo(proj, isRuning, runInfo) => println(s"$proj, $isRuning, $runInfo")
+  private def allProj():Seq[AppInfo] = Project.all.map { proj =>
+    runingActor.get(proj.pname) match {
+      case None => AppInfo(proj, runing = false, None)
+      case Some(pid) => AppInfo(proj, runing = true, Some(RunningInfo(pid.toString, "", "" )))
+    }
   }
 
   private def forwardProjActor(cmd:NamedProject)(projActorCreator:(String)=>ActorRef):Unit = {

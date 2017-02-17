@@ -4,9 +4,9 @@ import akka.actor.{Props, Actor}
 import models.Project
 import scala.sys.process._
 import scala.reflect.io.Path
-//import java.io.{File=>JFile}
+import java.io.{File=>JFile}
 import language.postfixOps
-//import collection.mutable.ArrayBuffer
+import collection.mutable.ArrayBuffer
 
 /**
   * Created by marco on 2017/2/5.
@@ -45,29 +45,22 @@ class DevApp(proj:Project) extends Actor{
     }
 
     case PathList(_, SourcePath(rp, isD, _)) => sender() ! SourcePath(rp, isD, Some(listRoot(rp)))
-//    case PathList(_, container) =>
-//      val valide =
-//        if (container.subs.isEmpty) SourcePath(container.rpath, container.isFile, Some(ArrayBuffer())) else container
-//      allstructs((proj.root/container.rpath).jfile, valide)
-//      sender() ! valide
   }
 
   def listRoot(spec:String) = (proj.root / spec).jfile.listFiles.map{ f =>
     SourcePath(proj.root.relativize(f.getCanonicalPath).path, f.isFile, None)
   }
 
-//  def allstructs(parentFile:JFile, c:SourcePath):Unit = parentFile.listFiles.foreach{ f => f.isDirectory match{
-//    case true =>
-//      val subs:ArrayBuffer[SourcePath] = c.subs.get.asInstanceOf[ArrayBuffer[SourcePath]]
-//      val node = SourcePath(proj.root.relativize(f.getCanonicalPath).path, true, Some(ArrayBuffer()))
-//      subs += node
-//      allstructs(f, node)
-//
-//    case false =>
-//      val subs:ArrayBuffer[SourcePath] = c.subs.get.asInstanceOf[ArrayBuffer[SourcePath]]
-//      val leaf = SourcePath(proj.root.relativize(f.getCanonicalPath).path, false, None)
-//      subs += leaf
-//  }}
+  def allstructs(parentFile:JFile, c:SourcePath):Unit = parentFile.listFiles.foreach{ f => 
+    val subs:ArrayBuffer[SourcePath] = c.subs.get.asInstanceOf[ArrayBuffer[SourcePath]]
+    f.isDirectory match{
+      case false => subs += SourcePath(proj.root.relativize(f.getCanonicalPath).path, false, None)
+      case true =>
+        val node = SourcePath(proj.root.relativize(f.getCanonicalPath).path, true, Some(ArrayBuffer()))
+        subs += node
+        allstructs(f, node)
+    }
+  }
 
   private def check() = isValide match {
     case true => forwardMornitor(GetInfo)
@@ -111,9 +104,4 @@ object DevApp{
   case class SourcePath(rpath: String, isFile: Boolean, subs: Option[Seq[SourcePath]]){
     def fname = Path(rpath).name
   }
-
-//  object SourcePath { import models.reqarg.JSFormatImplicit._ }
-
-//  import services.actor.RunningStdLog.Line
-//  case class ConsoleInfo(runningProj:Project, lineInfo:Line)
 }

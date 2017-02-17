@@ -5,6 +5,7 @@ import java.util.Date
 
 import akka.actor.{ActorRef, PoisonPill, Actor}
 import models.Project
+import services.actor.DevApp.{RunningInfo, AppInfo}
 import services.actor.ProjOnH2Actor.{Run, Stop}
 import services.actor.RunningStdLog.AllCached
 import scala.reflect.io.Path
@@ -19,14 +20,14 @@ class RMornitor(proj:Project) extends Actor{
 
   def receive = {
     case DevApp.GetInfo =>
-      sender() ! DevApp.AppInfo(proj, processing!=null, genLog("state"))
+      sender() ! AppInfo(proj, processing!=null, genLog("state"))
 
     case Run(strPath, consoleHandler) => sender() ! excSbtrun(scriptToCmd(Path(strPath)), consoleHandler)
-      context.actorSelection(self.path.parent.parent) ! DevApp.AppInfo(proj, processing!=null, genLog("state"))
+      context.actorSelection(self.path.parent.parent) ! AppInfo(proj, processing!=null, genLog("state"))
 
     case Stop(_) => val stopmsg = stopSbtRun()
-      sender() ! stopmsg.getOrElse(DevApp.RunningInfo("", "", "not running"))
-      context.actorSelection(self.path.parent.parent) ! DevApp.AppInfo(proj, processing!=null, stopmsg)
+      sender() ! stopmsg.getOrElse(RunningInfo("", "", "not running"))
+      context.actorSelection(self.path.parent.parent) ! AppInfo(proj, processing!=null, stopmsg)
 
     case AllCached => logactorRef.fold()(_.forward(AllCached))
   }
@@ -35,14 +36,14 @@ class RMornitor(proj:Project) extends Actor{
 
   private def genLog(logId:String) = processing match {
     case null => None
-    case (process, pid) => Some(DevApp.RunningInfo(s"${processing._2}", logId, ""))
+    case (process, pid) => Some(RunningInfo(s"${processing._2}", logId, ""))
   }
 
-  private def excSbtrun(cmd:String, ch:ConsoleHandler):DevApp.RunningInfo = {
+  private def excSbtrun(cmd:String, ch:ConsoleHandler):RunningInfo = {
     processing = determinProcess(cmd.run(new ProcessIO( o=> Unit, stdin=>consoleP(stdin), ein=>consoleP(ein))))
     stopLogMonitor()
     logactorRef = Some(context.actorOf(RunningStdLog.props(genLogerFile(proj.root, processing._2.toLong), ch), "loger"))
-    DevApp.RunningInfo(s"${processing._2}","run",s"$cmd")
+    RunningInfo(s"${processing._2}","run",s"$cmd")
   }
 
   // There has two method can terminte running process
@@ -50,12 +51,12 @@ class RMornitor(proj:Project) extends Actor{
   //    A.1 Make a variable to reference ProcessIO output stream
   //    A.2 Close this output stream that when you want terminate the process.
   // stop method B, for make sure the process been kill.
-  private def stopSbtRun():Option[DevApp.RunningInfo] = processing match {
+  private def stopSbtRun():Option[RunningInfo] = processing match {
     case null => None
     case (process, pid) => processing = null
       process.destroy()
       stopLogMonitor()
-      Some(DevApp.RunningInfo(pid.toString, "stop", s"process $pid was terminated"))
+      Some(RunningInfo(pid.toString, "stop", s"process $pid was terminated"))
   }
 
   // Process Callback thread and Actor thread is probably not the same, So

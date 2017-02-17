@@ -63,6 +63,10 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     (projActor ? Named(name)).mapTo[AppInfo].map{ info => Ok(Json.toJson(info))}
   }
 
+  def allproj() = Action.async {
+    (projActor ? All).mapTo[Seq[AppInfo]].map{ info => Ok(Json.toJson(info))}
+  }
+
   def runapp(name:String) = Action.async { appCmdHelper(Run(name, ConsoleDispatcher(name))){ isRepeate =>
     if(!isRepeate) {
       websocketDefaultRoom.createSubRoom(name)
