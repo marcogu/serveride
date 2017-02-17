@@ -6,7 +6,7 @@
     @if(titem.isFile){
     <li>
     	<a href="">
-    		<span data-spath="@titem.rpath">
+    		<span data-spath="@titem.rpath" style="white-space:nowrap;">
     			<i class="icon-calendar"></i>
     			@titem.fname
     		</span>
@@ -14,7 +14,7 @@
     </li>
     } else {
     <li>
-    	<span data-spath="@titem.rpath" data-treenode>
+    	<span data-spath="@titem.rpath" style="white-space:nowrap;" data-treenode>
     		<i class="icon-calendar"></i>
     		@titem.fname
     	</span>
