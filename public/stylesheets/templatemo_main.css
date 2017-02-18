@@ -205,7 +205,7 @@ body { background-color: rgb(235,235,235); }
     overflow: scroll; 
     position: absolute;
     top: 50px; 
-    bottom: 40px; 
+    bottom: 0px; 
     left: 0;
     font-size: 12px;
     background-color:#fbfbfb;

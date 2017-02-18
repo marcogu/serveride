@@ -5,7 +5,6 @@ import javax.inject.{Singleton, Inject}
 import akka.actor.{Props, ActorSystem}
 import akka.stream.Materializer
 import models.Project
-import models.viewparam.CodeMirrorModeInfo
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
 import play.api.libs.streams.ActorFlow
@@ -41,14 +40,9 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     })
   }
 
-  def editorView(path:String = null) = {
-    println(s"get load request with path $path")
-    val pageInfo = path match {
-      case null | "" =>  CodeMirrorModeInfo(Path(""))
-      case other => CodeMirrorModeInfo(Path(URLDecoder.decode(path, "UTF-8")))
-    }
-    val ctt = AppEnv.srcContent(pageInfo.filePath.path)
-    Action(Ok(views.html.codereditorfull(pageInfo.mainarg, pageInfo.cmtype, ctt, path, pageInfo.filePath.name)))
+  import models.viewparam.EditorTemplateArg._
+  def editorView(pname:String) = Action.async {
+    (projActor ? Named(pname)).mapTo[AppInfo].map { info => Ok(views.html.codereditorfull(mainarg(pname), pname)) }
   }
 
   def src(pname:String, relativePath:String) = Action.async {
