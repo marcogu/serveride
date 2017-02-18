@@ -33,6 +33,8 @@ GET		/proj/:proj/editor			controllers.EditorController.editorView(proj)
 GET		/proj/:proj/add/file/*fn    controllers.EditorController.addFile(proj:String, fn:String, isFolder="file")
 GET		/proj/:proj/add/folder/*fn  controllers.EditorController.addFile(proj:String, fn:String, isFolder="folder")
 GET     /proj/:proj/del/*fn         controllers.EditorController.delFile(proj, fn)
+#POST   /proj/:proj/upload/*fn      controllers.EditorController.uploadSrc(proj, fn)
+#Get    /proj/:proj/download/*fn    controllers.EditorController.download(proj, fn)
 POST	/proj/:proj/save/*f      	controllers.EditorController.save(proj, f)
 GET     /proj/all                   controllers.EditorController.allproj
 GET		/proj/:p/src/*f 			controllers.EditorController.src(p, f)
