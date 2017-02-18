@@ -33,6 +33,7 @@ GET		/editor/:path 				controllers.EditorController.editorView(path)
 POST    /editor/save/:path          controllers.EditorController.save(path)
 
 GET     /proj/all                   controllers.EditorController.allproj
+GET		/proj/:p/src/*f 			controllers.EditorController.src(p, f)
 GET     /proj/info/:n               controllers.EditorController.projinfo(n)
 GET		/proj/new/:n/:url 			controllers.EditorController.registerProj(n:String, url:String)
 GET     /proj/run/:n                controllers.EditorController.runapp(n)

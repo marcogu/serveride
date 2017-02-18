@@ -51,6 +51,10 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     Action(Ok(views.html.codereditorfull(pageInfo.mainarg, pageInfo.cmtype, ctt, path, pageInfo.filePath.name)))
   }
 
+  def src(pname:String, relativePath:String) = Action.async {
+    (projActor ? Named(pname)).mapTo[AppInfo].map{ app => Ok(AppEnv.srcContent((app.proj.root / relativePath).path)) }
+  }
+
   def srcFiles(projName:String, ext:String) = Action.async {
     (projActor ? Files(projName, ext)).mapTo[Map[String, String]].map { result => Ok(Json.toJson(result))}
   }

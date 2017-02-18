@@ -3,7 +3,8 @@
  */
 $(function(){
 
-    var nodeclicktest = function(e){
+    var nodeclick = function(e){
+        console.log("-----")
         var children = $(this).parent('li.parent_li').find(' > ul > li');
         if (children.length > 0) { // it contain children, excute animation
             if (children.is(":visible")) {
@@ -26,9 +27,14 @@ $(function(){
         e.stopPropagation();
     };
 
+    var leafclick = function(e){
+        console.log(e.target)
+    };
+
     $.get("/proj/autotoolt6/scode/view", function(result){
-        $("#divFileStruct").html(result);
+        $("#divFileStruct").html(result); 
         $('.tree li').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
-        $('.tree li.parent_li > span').on('click', nodeclicktest);
+        $('.tree li.parent_li > span').on('click', nodeclick);
+        $('.tree li.parent_li > a > span').on('click', leafclick);
     });
 });
