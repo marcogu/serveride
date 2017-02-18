@@ -30,9 +30,7 @@ GET     /assets/lib/*file               controllers.Assets.at(path="/public/lib"
 
 
 GET		/proj/:proj/editor			controllers.EditorController.editorView(proj)
-# 
-#POST   /proj/:proj/save/*f      	controllers.EditorController.save(path)
-
+POST	/proj/:proj/save/*f      	controllers.EditorController.save(proj, f)
 GET     /proj/all                   controllers.EditorController.allproj
 GET		/proj/:p/src/*f 			controllers.EditorController.src(p, f)
 GET     /proj/info/:n               controllers.EditorController.projinfo(n)
@@ -44,7 +42,7 @@ GET     /proj/:p/scode/list/:rpp    controllers.EditorController.listSub(p, rpp)
 GET		/proj/:p/scode/view 		controllers.EditorController.listSubView(p, relativePath="")
 GET		/proj/:p/scode/view/:rpp 	controllers.EditorController.listSubView(p, rpp)
 
-GET     /socket/console/:proj      controllers.EditorController.subscriptConsole(proj)
+GET     /socket/console/:proj		controllers.EditorController.subscriptConsole(proj)
 
 #GET     /scode/gen/:n               controllers.EditorController.genproj(n)
 

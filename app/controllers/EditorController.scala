@@ -42,7 +42,15 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
 
   import models.viewparam.EditorTemplateArg._
   def editorView(pname:String) = Action.async {
-    (projActor ? Named(pname)).mapTo[AppInfo].map { info => Ok(views.html.codereditorfull(mainarg(pname), pname)) }
+    (projActor ? Named(pname)).mapTo[AppInfo].map { app => Ok(views.html.codereditorfull(mainarg(pname), pname)) }
+  }
+
+  import java.io.PrintWriter;
+  def save(proj:String, rpath:String) = Action.async(parse.tolerantText){ implicit req =>
+    (projActor ? Named(proj)).mapTo[AppInfo].map { app => 
+      new PrintWriter((app.proj.root / rpath).path) { write(req.body); close }
+      Ok("file did save")
+    }
   }
 
   def src(pname:String, relativePath:String) = Action.async {
@@ -58,7 +66,7 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
   }
 
   def projinfo(name:String) = Action.async {
-    (projActor ? Named(name)).mapTo[AppInfo].map{ info => Ok(Json.toJson(info))}
+    (projActor ? Named(name)).mapTo[AppInfo].map{ app => Ok(Json.toJson(app))}
   }
 
   def allproj() = Action.async {
@@ -90,32 +98,18 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
   }
 
   def listSubView(proj:String, relativePath:String) = Action.async {
-    (projActor ? listCmd(proj, relativePath)).mapTo[SourcePath].map { r => 
-      Ok(views.html.treeview(r))
-    }
+    (projActor ? listCmd(proj, relativePath)).mapTo[SourcePath].map { r => Ok(views.html.treeview(r)) }
   }     
 
   def consoleScreen(runningProjName:String) = Action.async { // test method
-    (projActor ? Console(runningProjName)).map{ r=>
-      Ok(r.toString)
-    }
+    (projActor ? Console(runningProjName)).map{ r=> Ok(r.toString) }
   }
 
   def tv = Action.async { // test method
-    (projActor ? listCmd("autotoolt6", "")).mapTo[SourcePath].map { r=>
-      Ok(views.html.treeview(r))
-    }
+    (projActor ? listCmd("autotoolt6", "")).mapTo[SourcePath].map { r=> Ok(views.html.treeview(r)) }
   }
 
   def subs = Action.async { // test method
-    (projActor ? listCmd("autotoolt6", "app")).mapTo[SourcePath].map { r =>
-      Ok(views.html.tags.treeitem(r))
-    }
-  }
-
-  // TODO: finish it
-  def save(path:String) = Action(parse.tolerantText){ implicit req =>
-    Logger.debug(s"${req.body}")
-    Ok("----")
+    (projActor ? listCmd("autotoolt6", "app")).mapTo[SourcePath].map { r => Ok(views.html.tags.treeitem(r)) }
   }
 }

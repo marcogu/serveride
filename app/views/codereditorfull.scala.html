@@ -11,20 +11,12 @@
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#">Edit @projName</a>
 			</div>
-<!-- 
 			<form class="navbar-form navbar-right" role="search">
 				<div class="form-group">
-					<input type="text" class="form-control" ng-model="selectedScode" data-min-length="0"
-					bs-options="scode[0] for scode in popupScodeFiles" style="outline:none;"
-					placeholder="查找源码" bs-typeahead>
-					<button type="button" class="btn btn-primary" style="outline:none" ng-click="reload()">load</button>
-					<button type="button" class="btn btn-success" style="outline:none" ng-click="save()">save</button>
-					<button type="button" class="btn btn-primary" style="outline:none"
-						data-template-url="/view/cmphello" bs-modal="modal" data-animation="am-fade-and-slide-top"
-						 >modal</button> 
+					<button id="btnSave" type="button" 
+						class="btn btn-success" style="outline:none">save</button> 
 				</div>
 			</form>
--->			
 		</div>
 	</div>
 
@@ -45,6 +37,35 @@
 			</style>
 			<textarea id="txaEditor" style="display: none;">
 			</textarea>
+		</div>
+	</div>
+
+	<!-- modal dialog for add new file -->
+	<div class="modal fade" id="addFileModal" tabindex="-1" role="dialog" aria-labelledby="addFileModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<span class="modal-title" id="addFileModalLabel">输入文件名</span>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group form-group-sm form-inline">
+							<label for="recipient-fname" class="control-label">文件名:</label>
+							<input type="text" class="form-control" id="recipient-fname">
+							<label>
+								<input type="checkbox"> 文件夹
+							</label>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-primary btn-sm">添加</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
