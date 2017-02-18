@@ -2,6 +2,7 @@
  * Created by marco on 2017/2/16.
  */
 $(function(){
+    "use strict";
 
     var nodeclick = function(e){
         console.log("-----")
@@ -21,14 +22,20 @@ $(function(){
                 subContainer.html(result);
 
                 subContainer.find("li").addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
-                subContainer.find('li.parent_li > span').on('click', nodeclicktest);
+                subContainer.find('li.parent_li > span').on('click', nodeclick);
+                subContainer.find('li.parent_li > a > span').on('click', leafclick);
             })    
         }
         e.stopPropagation();
     };
 
     var leafclick = function(e){
-        console.log(e.target)
+        var rpath = $(this).attr("data-spath");
+        var testSepcProjectName = "autotoolt6"
+        var requrl = "/proj/" + testSepcProjectName + "/src/" + rpath;
+        $.get(requrl, function(response){
+            console.log(response);    
+        });
     };
 
     $.get("/proj/autotoolt6/scode/view", function(result){
