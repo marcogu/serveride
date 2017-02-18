@@ -37,8 +37,12 @@ object ProjOnH2Actor {
   case class Stop(pname:String) extends NamedProject
   case class Console(pname:String) extends NamedProject
   case class PathList(pname:String, specPath:SourcePath) extends NamedProject
+  case class AddFile(pname:String, relativePath:String, isFolder:Boolean) extends NamedProject
+  case class DelFile(pname:String, relativePath:String) extends NamedProject
 
-  def listCmd(proj:String, container:String):PathList = PathList(proj, SourcePath(container, false, None) )
+  case class OperationResponse(actorMsg:AnyRef, succ:Boolean, msg:String)
+
+  def listCmd(proj:String, container:String):PathList = PathList(proj, SourcePath(container, isFile=false, None) )
 }
 
 
@@ -52,13 +56,13 @@ class ProjOnH2Actor(implicit session:QuerySession) extends Actor {
   def receive = {
     case All => sender() ! allProj()
     case NewProj(n, p) => forwardProjActor(Named(p))( _ => context.actorOf(DevApp.props(Project.newProj(n, p)), n))
-    case pcmd:NamedProject => forwardProjActor(pcmd)(actorFromQuery)
     // this message from RMornitor actor, when the project run or stop.
     case AppInfo(proj, isRuning, runInfo) => isRuning match {
       case false => runingActor.remove(proj.pname)
       case true => val pid = runInfo.fold(-1)(rinfo => rinfo.sessionId.toInt)
         runingActor.put(proj.pname, pid)
     }
+    case pcmd:NamedProject => forwardProjActor(pcmd)(actorFromQuery)
   }
 
   private def allProj():Seq[AppInfo] = Project.all.map { proj =>

@@ -45,10 +45,18 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     (projActor ? Named(pname)).mapTo[AppInfo].map { app => Ok(views.html.codereditorfull(mainarg(pname), pname)) }
   }
 
-  import java.io.PrintWriter;
+  def addFile(pname:String, fn:String, isFolder:String) = Action.async {
+    (projActor ? AddFile(pname, fn, isFolder.equals("folder"))).mapTo[OperationResponse].map { r => Ok(r.toString)}
+  }
+
+  def delFile(pname:String, fn:String) = Action.async {
+    (projActor ? DelFile(pname, fn)).mapTo[OperationResponse].map { r => Ok(r.toString)}
+  }
+
+  import java.io.PrintWriter
   def save(proj:String, rpath:String) = Action.async(parse.tolerantText){ implicit req =>
     (projActor ? Named(proj)).mapTo[AppInfo].map { app => 
-      new PrintWriter((app.proj.root / rpath).path) { write(req.body); close }
+      new PrintWriter((app.proj.root / rpath).path) { write(req.body); close() }
       Ok("file did save")
     }
   }
