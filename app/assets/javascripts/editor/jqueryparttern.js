@@ -123,4 +123,26 @@ $(function(){
         $('.tree li.parent_li > a > span').on('click', treeLeafClick);
         $('#btnSave').on('click', saveHandler);
     });
+
+    $('#btnOnNavbar').on('click', function(){
+        var termHeight = $('#divTerminal').css("height");
+        console.log(termHeight);
+        if (termHeight == "0px") {
+            showTerminal();
+        } else {
+            hideTerminal();
+        }
+    });
+
+    function showTerminal(size){
+        $('#divEditorContainer').css("bottom", "200px");
+        $('#divFileStruct').css("bottom", "200px");
+        $('#divTerminal').css("height", "200px");
+    };
+
+    function hideTerminal(){
+        $('#divEditorContainer').css("bottom", "0px");
+        $('#divFileStruct').css("bottom", "0px");
+        $('#divTerminal').css("height", "0px");
+    }
 });

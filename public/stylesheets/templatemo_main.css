@@ -201,6 +201,14 @@ body { background-color: rgb(235,235,235); }
     }
 }
 
+.terminal{
+    position: absolute;
+    bottom: 0px; 
+    height: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: red;
+}
 .tree {
     overflow: scroll; 
     position: absolute;
