@@ -125,24 +125,66 @@ $(function(){
     });
 
     $('#btnOnNavbar').on('click', function(){
-        var termHeight = $('#divTerminal').css("height");
-        console.log(termHeight);
-        if (termHeight == "0px") {
-            showTerminal();
-        } else {
-            hideTerminal();
-        }
+        runApplication();
     });
 
     function showTerminal(size){
-        $('#divEditorContainer').css("bottom", "200px");
-        $('#divFileStruct').css("bottom", "200px");
-        $('#divTerminal').css("height", "200px");
+        var termHeight = $('#divTerminal').css("height");
+        if (termHeight == "0px") {
+            $('#divEditorContainer').css("bottom", "200px");
+            $('#divFileStruct').css("bottom", "200px");
+            $('#divTerminal').css("height", "200px");
+        }
     };
 
     function hideTerminal(){
-        $('#divEditorContainer').css("bottom", "0px");
-        $('#divFileStruct').css("bottom", "0px");
-        $('#divTerminal').css("height", "0px");
-    }
+        var termHeight = $('#divTerminal').css("height");
+        if (termHeight != "0px") {
+            $('#divEditorContainer').css("bottom", "0px");
+            $('#divFileStruct').css("bottom", "0px");
+            $('#divTerminal').css("height", "0px");
+        }
+    };
+
+    var terminalSocket = null;
+
+    function runApplication(){
+        var requestRun = "/proj/run/" + testSepcProjectName;
+        $.get(requestRun, function(result){
+            if (result.runing || result.sessionId) {
+                showTerminal();
+                var socketUrl = "ws://localhost:9527/socket/console/" + testSepcProjectName;
+                terminalSocket = new WebSocket(socketUrl);
+                terminalSocket.onopen = termialSocketOpen;
+                terminalSocket.onclose = terminalSocketClose;
+                terminalSocket.onmessage = terminalSocketMessage;
+                terminalSocket.onerror = terminalSocketErr;
+            }
+        });
+    };
+
+    function termialSocketOpen(evt){
+        // showTerminal();
+    };
+
+    var term = null;
+    function createTerm(){
+        term = new Terminal();
+        term.open(terminalContainer);
+        term.fit();
+
+    };
+
+    function terminalSocketClose(evt){
+        hideTerminal();
+    };
+
+    function terminalSocketMessage(evt){
+        $("#divTerminal").html(evt.data);
+    };
+
+    function terminalSocketErr(evt){
+
+    };
+
 });

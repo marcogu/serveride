@@ -207,7 +207,8 @@ body { background-color: rgb(235,235,235); }
     height: 0px;
     left: 0px;
     right: 0px;
-    background-color: red;
+    background-color: black;
+    color: white;
 }
 .tree {
     overflow: scroll; 
