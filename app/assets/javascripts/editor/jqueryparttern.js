@@ -16,17 +16,34 @@ $(function(){
         renderEle:null
     };
 
-    var rightClick = function(key, options){
-        var operationPath = options.$trigger.attr("data-spath");
+    var rightClickTreeItem = {
+        rpath:"",
+        ele:null
+    }
+
+    var contextMenuClickHandler = function(key, options){
+        rightClickTreeItem.ele = options.$trigger;
+        rightClickTreeItem.rpath = rightClickTreeItem.ele.attr("data-spath");
         $("#addFileModal").modal();
-        $("#addFileModal").on('click', function(){
-            console.log(document.getElementById("recipient-fname").value);
-        });
     };
+
+    var addFileModalHideHandler = function(e){
+        // var i1 = rightClickTreeItem.ele.find("> span");
+        // var i2 = rightClickTreeItem.ele.find("> a > span");
+        // console.log(rightClickTreeItem.ele.attr("data-treenode"));
+        var isNode = rightClickTreeItem.ele.attr("data-treenode") == "node";
+        if (isNode) { // add sub item in right click node
+
+        } else { // right click on file item and append tree item after current click item.
+
+        }
+        console.log(rightClickTreeItem.ele.parent());
+    };
+    $("#addFileModal").on('hide.bs.modal', addFileModalHideHandler);
 
     $.contextMenu({ // right click menu
         selector: '.context-menu-tree', 
-        callback: rightClick,
+        callback: contextMenuClickHandler,
         items: {
             "add": {name: "添加"},
             "del": {name: "删除"}
@@ -42,9 +59,8 @@ $(function(){
                 children.show('fast');
             }            
         } else {
-            var rpath = $(this).attr("data-spath");
             var subContainer = $(this).parent("li").find("ul");
-            var querySubUrl = "/proj/autotoolt6/scode/view/" + encodeURIComponent(rpath)
+            var querySubUrl = "/proj/autotoolt6/scode/view/" + $(this).attr("data-spath");
 
             $.get(querySubUrl, function(result){
                 subContainer.html(result);

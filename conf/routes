@@ -45,7 +45,7 @@ GET     /proj/stop/:n               controllers.EditorController.stopapp(n)
 GET     /proj/:p/scode/list         controllers.EditorController.listSub(p, relativePath="")
 GET     /proj/:p/scode/list/:rpp    controllers.EditorController.listSub(p, rpp)
 GET		/proj/:p/scode/view 		controllers.EditorController.listSubView(p, relativePath="")
-GET		/proj/:p/scode/view/:rpp 	controllers.EditorController.listSubView(p, rpp)
+GET		/proj/:p/scode/view/*rpp 	controllers.EditorController.listSubView(p, rpp)
 
 GET     /socket/console/:proj		controllers.EditorController.subscriptConsole(proj)
 
