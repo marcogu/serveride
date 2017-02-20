@@ -157,22 +157,24 @@ $(function(){
                 terminalSocket = new WebSocket(socketUrl);
                 terminalSocket.onopen = termialSocketOpen;
                 terminalSocket.onclose = terminalSocketClose;
-                terminalSocket.onmessage = terminalSocketMessage;
+                // terminalSocket.onmessage = terminalSocketMessage;
                 terminalSocket.onerror = terminalSocketErr;
             }
         });
     };
 
     function termialSocketOpen(evt){
-        // showTerminal();
+        createTerm();
     };
 
     var term = null;
     function createTerm(){
-        term = new Terminal();
-        term.open(terminalContainer);
-        term.fit();
-
+        var terminalContainer = $("#divTerminal")[0];
+        // term = new Terminal();
+        // term.open(terminalContainer);
+        // // term.fit();
+        // term.attach(socket);
+        // term._initialized = true;
     };
 
     function terminalSocketClose(evt){
@@ -180,7 +182,7 @@ $(function(){
     };
 
     function terminalSocketMessage(evt){
-        $("#divTerminal").html(evt.data);
+        //$("#divTerminal").html(evt.data);
     };
 
     function terminalSocketErr(evt){
