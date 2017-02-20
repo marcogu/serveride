@@ -25,18 +25,12 @@ class RunningStdLog(logName:Path, consoleHandler:ConsoleHandler) extends Actor{
     case Line(Some(lcontent), None) => lnum += 1
       writer.println(lcontent)
       writer.flush()
-      excDispatch(Line(Some(fixIfLastCharIsNotNewLineCharater(lcontent)), Some(lnum)))
+      excDispatch(Line(Some(lcontent), Some(lnum)))
 
     case Line(None, Some(idx)) => sender() ! numberLineFormCache(fitLen(idx))
     case MaxLineNum => sender() ! LRange(0, lnum)
     case LRange(s, e) => sender() ! Lines(s to fitLen(e) map { numberLineFormCache }, LRange(s, e) )
     case AllCached => sender() ! logCacher
-  }
-
-  def fixIfLastCharIsNotNewLineCharater(lineString:String):String = if(lineString == null || lineString.isEmpty)
-    lineString else lineString.last match {
-    case '\n' | '\r' => lineString
-    case other => s"$lineString\r\n"
   }
 
   def numberLineFormCache(n:Int):Line = logCacher.get(n) match {

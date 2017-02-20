@@ -139,17 +139,18 @@ $(function(){
             $('#divTermPanel').css("height", "200px");
             $('#divTerminal').css("height", "180px");
             $('#divTerminal').show("fast");
+            createTerm();
         }
     };
 
     function hideTerminal(){
         var termHeight = $('#divTermPanel').css("height");
         if (termHeight != "0px") {
+            $('#divTerminal').hide("fast");
             $('#divEditorContainer').css("bottom", "20px");
             $('#divFileStruct').css("bottom", "20px");
             $('#divTerminal').css("height", "0px");
             $('#divTermPanel').css("height", "20px");
-            $('#divTerminal').hide("fast");
         }
     };
 
@@ -162,28 +163,37 @@ $(function(){
                 showTerminal();
                 var socketUrl = "ws://localhost:9527/socket/console/" + testSepcProjectName;
                 terminalSocket = new WebSocket(socketUrl);
-                terminalSocket.onopen = createTerm;
-        //         terminalSocket.onclose = terminalSocketClose;
+                // terminalSocket.onopen = createTerm;
+                terminalSocket.onclose = terminalSocketClose;
                 terminalSocket.onmessage = terminalSocketMessage;
-        //         terminalSocket.onerror = terminalSocketErr;
+                terminalSocket.onerror = terminalSocketErr;
             }
         });
     };
 
     var term = null;
     function createTerm(evt){
-        var terminalContainer = $("#divTerminal")[0];
-        term = new Terminal();
-        term.open(terminalContainer);
-        term._initialized = true;
-        term.fit();
+        if (term == null) {
+            var terminalContainer = $("#divTerminal")[0];
+            term = new Terminal();
+            term.open(terminalContainer);
+            term._initialized = true;
+            term.fit();    
+        }
     };
 
-    function terminalSocketClose(evt){ hideTerminal(); };
-    function terminalSocketMessage(evt){ 
-        term.write(evt.data);
+    function terminalSocketClose(evt){ 
+        term.writeln("\x1b[41mTerminal Disconnected\x1b[0m");
+        term.writeln("");
+        term.writeln("");
     };
-    function terminalSocketErr(evt){};
+    function terminalSocketMessage(evt){ 
+        term.writeln(evt.data);
+    };
+    function terminalSocketErr(evt){
+        term.writeln("\x1b[41mTerminal socket error:");
+        term.writeln(evt.data + "\x1b[0m");
+    };
 
     $('#btnStop').on('click', function(evt){
         var apiurl = "/proj/stop/" + testSepcProjectName;
