@@ -164,7 +164,7 @@ $(function(){
                 terminalSocket = new WebSocket(socketUrl);
                 terminalSocket.onopen = createTerm;
         //         terminalSocket.onclose = terminalSocketClose;
-        //         // terminalSocket.onmessage = terminalSocketMessage;
+                terminalSocket.onmessage = terminalSocketMessage;
         //         terminalSocket.onerror = terminalSocketErr;
             }
         });
@@ -175,13 +175,14 @@ $(function(){
         var terminalContainer = $("#divTerminal")[0];
         term = new Terminal();
         term.open(terminalContainer);
-        term.attach(terminalSocket);
-        term.fit();
         term._initialized = true;
+        term.fit();
     };
 
     function terminalSocketClose(evt){ hideTerminal(); };
-    function terminalSocketMessage(evt){ };
+    function terminalSocketMessage(evt){ 
+        term.write(evt.data);
+    };
     function terminalSocketErr(evt){};
 
     $('#btnStop').on('click', function(evt){
