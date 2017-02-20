@@ -201,20 +201,23 @@ body { background-color: rgb(235,235,235); }
     }
 }
 
-.terminalContainer{
+.termPanel{
     position: absolute;
     bottom: 0px; 
-    height: 0px;
+    height: 20px;
     left: 0px;
     right: 0px;
     background-color: black;
     /*color: white;*/
 }
+/*.terminalWrapper{
+    background-color: red;
+}*/
 .tree {
     overflow: scroll; 
     position: absolute;
     top: 50px; 
-    bottom: 0px; 
+    bottom: 20px; 
     left: 0;
     font-size: 12px;
     background-color:#fbfbfb;

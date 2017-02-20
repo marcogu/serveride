@@ -33,7 +33,8 @@ class RunningStdLog(logName:Path, consoleHandler:ConsoleHandler) extends Actor{
     case AllCached => sender() ! logCacher
   }
 
-  def fixIfLastCharIsNotNewLineCharater(lineString:String):String = lineString.last match {
+  def fixIfLastCharIsNotNewLineCharater(lineString:String):String = if(lineString == null || lineString.isEmpty)
+    lineString else lineString.last match {
     case '\n' | '\r' => lineString
     case other => s"$lineString\r\n"
   }

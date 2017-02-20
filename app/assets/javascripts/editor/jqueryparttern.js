@@ -28,9 +28,11 @@ $(function(){
     };
 
     var addFileModalHideHandler = function(e){
+        // taste print:
         // var i1 = rightClickTreeItem.ele.find("> span");
         // var i2 = rightClickTreeItem.ele.find("> a > span");
         // console.log(rightClickTreeItem.ele.attr("data-treenode"));
+        // logic:
         var isNode = rightClickTreeItem.ele.attr("data-treenode") == "node";
         if (isNode) { // add sub item in right click node
 
@@ -125,24 +127,26 @@ $(function(){
     });
 
     $('#btnOnNavbar').on('click', function(){
-        runApplication()
+        runApplication();
+        // showTerminal();
     });
 
-    function showTerminal(size){
-        var termHeight = $('#divTerminal').css("height");
-        if (termHeight == "0px") {
+    function showTerminal(evt){
+        var termHeight = $('#divTermPanel').css("height");
+        console.log("show---" + termHeight);
+        if (termHeight == "20px") {
             $('#divEditorContainer').css("bottom", "200px");
             $('#divFileStruct').css("bottom", "200px");
-            $('#divTerminal').css("height", "200px");
+            $('#divTermPanel').css("height", "200px");
         }
     };
 
     function hideTerminal(){
-        var termHeight = $('#divTerminal').css("height");
+        var termHeight = $('#divTermPanel').css("height");
         if (termHeight != "0px") {
-            $('#divEditorContainer').css("bottom", "0px");
-            $('#divFileStruct').css("bottom", "0px");
-            $('#divTerminal').css("height", "0px");
+            $('#divEditorContainer').css("bottom", "20px");
+            $('#divFileStruct').css("bottom", "20px");
+            $('#divTermPanel').css("height", "20px");
         }
     };
 
@@ -183,5 +187,9 @@ $(function(){
             console.log(result);
         });
     });
+
+    $('#spnShowConsole').on('click', showTerminal);
+    $('#spnHideConsole').on('click', hideTerminal);
+
 
 });
