@@ -128,7 +128,6 @@ $(function(){
 
     $('#btnOnNavbar').on('click', function(){
         runApplication();
-        // showTerminal();
     });
 
     function showTerminal(evt){
@@ -138,6 +137,8 @@ $(function(){
             $('#divEditorContainer').css("bottom", "200px");
             $('#divFileStruct').css("bottom", "200px");
             $('#divTermPanel').css("height", "200px");
+            $('#divTerminal').css("height", "180px");
+            $('#divTerminal').show("fast");
         }
     };
 
@@ -146,7 +147,9 @@ $(function(){
         if (termHeight != "0px") {
             $('#divEditorContainer').css("bottom", "20px");
             $('#divFileStruct').css("bottom", "20px");
+            $('#divTerminal').css("height", "0px");
             $('#divTermPanel').css("height", "20px");
+            $('#divTerminal').hide("fast");
         }
     };
 
