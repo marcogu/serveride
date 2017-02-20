@@ -11,7 +11,8 @@ object EditorTemplateArg {
     "/assets/javascripts/codemirro5-23-0/theme/ambiance.css",
     "/assets/lib/bootstrap/css/bootstrap.min.css",
     "/assets/stylesheets/jquery.contextMenu.min.css",
-    "/assets/stylesheets/templatemo_main.css"
+    "/assets/stylesheets/templatemo_main.css",
+    "/assets/stylesheets/xterm.css"
   )
 
   def jsurls:MSeq[String] = MSeq(
@@ -26,6 +27,10 @@ object EditorTemplateArg {
     "/assets/javascripts/codemirro5-23-0/mode/javascript/javascript.js",
     "/assets/javascripts/codemirro5-23-0/mode/css/css.js",
     "/assets/javascripts/codemirro5-23-0/mode/properties/properties.js",
+    "/assets/javascripts/xtermjs-2.3.2/xterm.js",
+    "/assets/javascripts/xtermjs-2.3.2/addons/attach/attach.js",
+    "/assets/javascripts/xtermjs-2.3.2/addons/fit/fit.js",
+    // "/assets/javascripts/xtermjs-2.3.2/addons/fullscreen.js",
     "/assets/javascripts/editor/jqueryparttern.js"
   )
 
