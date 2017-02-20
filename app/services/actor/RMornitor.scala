@@ -95,7 +95,10 @@ class RMornitor(proj:Project) extends Actor{
         s"${(new Date().getTime / 1000).toHexString}-" +
         s"${(new util.Random).nextInt(255).toHexString}"
     }
-    val logf = projPath / logFileName
+    val logContainer = projPath / "jzlog";
+    if(!logContainer.exists){ logContainer.createDirectory() }
+
+    val logf = logContainer / logFileName
     if(!logf.exists) logf.createFile()
     logf
   }

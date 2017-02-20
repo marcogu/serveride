@@ -125,7 +125,7 @@ $(function(){
     });
 
     $('#btnOnNavbar').on('click', function(){
-        runApplication();
+        runApplication()
     });
 
     function showTerminal(size){
@@ -155,38 +155,33 @@ $(function(){
                 showTerminal();
                 var socketUrl = "ws://localhost:9527/socket/console/" + testSepcProjectName;
                 terminalSocket = new WebSocket(socketUrl);
-                terminalSocket.onopen = termialSocketOpen;
-                terminalSocket.onclose = terminalSocketClose;
-                // terminalSocket.onmessage = terminalSocketMessage;
-                terminalSocket.onerror = terminalSocketErr;
+                terminalSocket.onopen = createTerm;
+        //         terminalSocket.onclose = terminalSocketClose;
+        //         // terminalSocket.onmessage = terminalSocketMessage;
+        //         terminalSocket.onerror = terminalSocketErr;
             }
         });
     };
 
-    function termialSocketOpen(evt){
-        createTerm();
-    };
-
     var term = null;
-    function createTerm(){
+    function createTerm(evt){
         var terminalContainer = $("#divTerminal")[0];
-        // term = new Terminal();
-        // term.open(terminalContainer);
-        // // term.fit();
-        // term.attach(socket);
-        // term._initialized = true;
+        term = new Terminal();
+        term.open(terminalContainer);
+        term.attach(terminalSocket);
+        term.fit();
+        term._initialized = true;
     };
 
-    function terminalSocketClose(evt){
-        hideTerminal();
-    };
+    function terminalSocketClose(evt){ hideTerminal(); };
+    function terminalSocketMessage(evt){ };
+    function terminalSocketErr(evt){};
 
-    function terminalSocketMessage(evt){
-        //$("#divTerminal").html(evt.data);
-    };
-
-    function terminalSocketErr(evt){
-
-    };
+    $('#btnStop').on('click', function(evt){
+        var apiurl = "/proj/stop/" + testSepcProjectName;
+        $.get(apiurl, function(result){
+            console.log(result);
+        });
+    });
 
 });
