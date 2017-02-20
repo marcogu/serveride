@@ -126,9 +126,7 @@ $(function(){
         $('#btnSave').on('click', saveHandler);
     });
 
-    $('#btnOnNavbar').on('click', function(){
-        runApplication();
-    });
+    $('#btnOnNavbar').on('click', runApplication);
 
     function showTerminal(evt){
         var termHeight = $('#divTermPanel').css("height");
@@ -157,18 +155,25 @@ $(function(){
     var terminalSocket = null;
 
     function runApplication(){
+        showTerminal();
         var requestRun = "/proj/run/" + testSepcProjectName;
         $.get(requestRun, function(result){
             if (result.runing || result.sessionId) {
-                showTerminal();
-                var socketUrl = "ws://localhost:9527/socket/console/" + testSepcProjectName;
-                terminalSocket = new WebSocket(socketUrl);
-                // terminalSocket.onopen = createTerm;
-                terminalSocket.onclose = terminalSocketClose;
-                terminalSocket.onmessage = terminalSocketMessage;
-                terminalSocket.onerror = terminalSocketErr;
+                connectToRunningTerminal();        
+            }else {
+                alert(JSON.stringify(result)); // error
             }
         });
+    };
+
+    function connectToRunningTerminal(){
+        if (terminalSocket != null) return;
+        var socketUrl = "ws://localhost:9527/socket/console/" + testSepcProjectName;
+        terminalSocket = new WebSocket(socketUrl);
+        // terminalSocket.onopen = createTerm;
+        terminalSocket.onclose = terminalSocketClose;
+        terminalSocket.onmessage = terminalSocketMessage;
+        terminalSocket.onerror = terminalSocketErr;
     };
 
     var term = null;
@@ -183,6 +188,7 @@ $(function(){
     };
 
     function terminalSocketClose(evt){ 
+        terminalSocket = null;
         term.writeln("\x1b[41mTerminal Disconnected\x1b[0m");
         term.writeln("");
         term.writeln("");
@@ -202,7 +208,15 @@ $(function(){
         });
     });
 
-    $('#spnShowConsole').on('click', showTerminal);
+    $('#spnShowConsole').on('click', function(){
+        showTerminal();
+        var requestRun = "/proj/info/" + testSepcProjectName;
+        $.get(requestRun, function(result){
+            if (result.runing) {
+                connectToRunningTerminal();        
+            }
+        });
+    });
     $('#spnHideConsole').on('click', hideTerminal);
 
 
