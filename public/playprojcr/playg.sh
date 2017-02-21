@@ -30,7 +30,7 @@ cp "$templateFolder/tp.plugins.sbt.tp" project/plugins.sbt
 cp "$templateFolder/tp.build.properties.tp" project/build.properties
 cp "$templateFolder/tp.application.conf.tp" conf/application.conf
 cp "$templateFolder/tp.routes.tp" conf/routes
-cp $templateFolder/jquery-3.1.1.js > public/javascripts/jquery-3.1.1.js
+cp $templateFolder/tp.jquery-3.1.1.js.tp > public/javascripts/jquery-3.1.1.js
 if [ -f "$templateFolder/tp.DefaultController.scala.tp" ]; then
 	cp "$templateFolder/tp.DefaultController.scala.tp" app/controllers/DefaultController.scala
 else
