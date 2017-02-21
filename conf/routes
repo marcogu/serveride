@@ -42,7 +42,7 @@ POST	/proj/:proj/save/*f      	controllers.EditorController.save(proj, f)
 GET     /proj/all                   controllers.EditorController.allproj
 GET		/proj/:p/src/*f 			controllers.EditorController.src(p, f)
 GET     /proj/info/:n               controllers.EditorController.projinfo(n)
-GET		/proj/new/:n/:url 			controllers.EditorController.registerProj(n:String, url:String)
+GET		/proj/new/:n	 			controllers.EditorController.newProj(n:String)
 GET     /proj/run/:n                controllers.EditorController.runapp(n)
 GET     /proj/stop/:n               controllers.EditorController.stopapp(n)
 GET     /proj/:p/scode/list         controllers.EditorController.listSub(p, relativePath="")
@@ -61,7 +61,5 @@ GET     /env                       controllers.Application.env
 GET     /pid                       controllers.Application.pid
 GET     /tt                        controllers.Application.tt
 GET     /tv                        controllers.EditorController.tv
-GET     /tv/subs                   controllers.EditorController.subs
-GET     /proj/console/:n            controllers.EditorController.consoleScreen(n)
 
 

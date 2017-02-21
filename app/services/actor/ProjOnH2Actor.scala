@@ -1,7 +1,7 @@
 package services.actor
 
 import akka.actor._
-import models.Project
+import models.{Project, WorkSpace}
 import services.mpos.QuerySession
 
 
@@ -55,7 +55,8 @@ class ProjOnH2Actor(implicit session:QuerySession) extends Actor {
 
   def receive = {
     case All => sender() ! allProj()
-    case NewProj(n, p) => forwardProjActor(Named(p))( _ => context.actorOf(DevApp.props(Project.newProj(n, p)), n))
+    case NewProj(n, p) => val fixPath = fixNewProjPath(p)
+      forwardProjActor(Named(n))( _ => context.actorOf(DevApp.props(Project.newProj(n, fixPath)), n))
     // this message from RMornitor actor, when the project run or stop.
     case AppInfo(proj, isRuning, runInfo) => isRuning match {
       case false => runingActor.remove(proj.pname)
@@ -63,6 +64,11 @@ class ProjOnH2Actor(implicit session:QuerySession) extends Actor {
         runingActor.put(proj.pname, pid)
     }
     case pcmd:NamedProject => forwardProjActor(pcmd)(actorFromQuery)
+  }
+
+  private def fixNewProjPath(newAppPath:String):String = newAppPath match {
+    case null | "" => WorkSpace.default.url
+    case other => other
   }
 
   private def allProj():Seq[AppInfo] = Project.all.map { proj =>

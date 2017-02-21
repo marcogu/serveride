@@ -2,25 +2,30 @@ package controllers
 
 import java.net.URLDecoder
 import javax.inject.{Singleton, Inject}
+
+import scala.concurrent.Future
+import scala.reflect.io.Path
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+
+import akka.pattern.ask
 import akka.actor.{Props, ActorSystem}
 import akka.stream.Materializer
-import models.Project
+
+import play.api.mvc._
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logger
 import play.api.libs.streams.ActorFlow
 import play.api.mvc.Controller
+
+import models.{Project, WorkSpace}
+import models.reqarg.JSFormatImplicit._
+
+import services.actor.ConsoleDispatcher
 import services.actor.DevApp.{SourcePath, RunningInfo, AppInfo}
 import services.actor.{RMMember, WSRoom, ProjOnH2Actor}
 import services.actor.ProjOnH2Actor._
 import services.inspection.AppEnv
-import services.actor.ConsoleDispatcher
-import play.api.mvc._
-import scala.concurrent.Future
-import scala.reflect.io.Path
-import akka.pattern.ask
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-import models.reqarg.JSFormatImplicit._
 
 
 /**
@@ -69,8 +74,8 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     (projActor ? Files(projName, ext)).mapTo[Map[String, String]].map { result => Ok(Json.toJson(result))}
   }
 
-  def registerProj(name:String, url:String) = Action.async { val projLocation = URLDecoder.decode(url, "UTF-8")
-    (projActor ? NewProj(name, projLocation)).mapTo[AppInfo].map{ r => Ok(Json.toJson(r))}
+  def newProj(name:String) = Action.async {
+    (projActor ? NewProj(name, null)).mapTo[AppInfo].map{ r => Ok(Json.toJson(r))}
   }
 
   def projinfo(name:String) = Action.async {
@@ -110,15 +115,7 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     (projActor ? listCmd(proj, relativePath)).mapTo[SourcePath].map { r => Ok(views.html.treeview(r)) }
   }     
 
-  def consoleScreen(runningProjName:String) = Action.async { // test method
-    (projActor ? Console(runningProjName)).map{ r=> Ok(r.toString) }
-  }
-
-  def tv = Action.async { // test method
-    (projActor ? listCmd("autotoolt6", "")).mapTo[SourcePath].map { r=> Ok(views.html.treeview(r)) }
-  }
-
-  def subs = Action.async { // test method
-    (projActor ? listCmd("autotoolt6", "app")).mapTo[SourcePath].map { r => Ok(views.html.tags.treeitem(r)) }
+  def tv = Action { // test method
+    Ok(WorkSpace.default(Project.DDL().genQuerySession).toString)
   }
 }

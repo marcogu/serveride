@@ -96,7 +96,8 @@ $(function(){
                 editingItem.renderEle = CodeMirror.fromTextArea(txaEle, {
                     lineNumbers: true,
                     matchBrackets: true,
-                    theme: "ambiance",
+                    theme: "vibrant-ink",
+                  	//theme: "mdn-like",
                     mode: "text/x-scala"  // a test
                 }); 
             });

@@ -90,6 +90,7 @@ object Project {
         case true if !defaultWorkspacePath.isDirectory =>
           throw new Exception(s"can not create default workspace on $defaultWorkspacePath, contain the same name file")
         case false => defaultWorkspacePath.createDirectory()
+        case true =>
       }
 
       if(defaultWorkspacePath.isDirectory)
@@ -102,3 +103,8 @@ object Project {
   }
 }
 
+object WorkSpace{
+  def default(implicit session:QuerySession):WorkSpace = { session.query("SELECT * FROM WORKSAPCE LIMIT 1").map { item =>
+    WorkSpace(item.get("NAME").get, item.get("URL").get);
+  }.head }
+}
