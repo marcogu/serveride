@@ -1,0 +1,40 @@
+@import models.viewparam.MainTempateArguments
+@import services.actor.DevApp.AppInfo
+@import tags.projgruiditem
+@(implicit primaryTempConfig:MainTempateArguments, projs:Seq[AppInfo])
+
+@views.html.maintempl{
+
+	<div class="container">
+		<!-- left side  -->
+		<button id="menu-toggle" class="menu-toggle"><span>Menu</span></button>
+		<div id="theSidebar" class="sidebar">
+			<button class="close-button fa fa-fw fa-close"></button>
+			<h1><span>Server<span> Projects</h1>
+			@*<nav class="codrops-demos">*@
+				@*<a class="current-demo" href="index.html">Demo 1</a>*@
+				@*<a href="index2.html">Demo 2</a>*@
+			@*</nav>*@
+			<button>Add New Project</button>
+		</div>
+		<!-- grid -->
+		<div id="theGrid" class="main">
+			<!-- grid header -->
+			<section class="grid">
+				<header class="top-bar">
+					<h2 class="top-bar__headline">Latest articles</h2>
+					<div class="filter">
+						<span>Filter by:</span>
+						<span class="dropdown">Popular</span>
+					</div>
+				</header>
+				<!-- grid content -->
+				@if(projs != null && projs.nonEmpty){
+					@for(proj <- projs ){
+						@projgruiditem(proj)
+					}
+				}
+			</section>
+		</div>
+	</div>
+}

@@ -40,8 +40,8 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
     })
   }
 
-  import models.viewparam.EditorTemplateArg._
   def editorView(pname:String) = Action.async {
+    import models.viewparam.EditorTemplateArg._
     (projActor ? Named(pname)).mapTo[AppInfo].map { app => Ok(views.html.codereditorfull(mainarg(pname), pname)) }
   }
 
@@ -78,7 +78,8 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
   }
 
   def allproj() = Action.async {
-    (projActor ? All).mapTo[Seq[AppInfo]].map{ info => Ok(Json.toJson(info))}
+    import models.viewparam.ManageProjTemplArg._
+    (projActor ? All).mapTo[Seq[AppInfo]].map{ info => Ok(views.html.manageproj(mainarg(""), info)) }
   }
 
   def runapp(name:String) = Action.async { appCmdHelper(Run(name, ConsoleDispatcher(name))){ isRepeate =>

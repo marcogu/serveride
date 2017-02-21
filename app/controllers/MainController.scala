@@ -10,7 +10,9 @@ import play.api.mvc._
   */
 class MainController extends Controller {
 
-  def appIdx = Action(Ok(views.html.dashboardidx(MainTempateArguments())))
+  def index = Action { Redirect("/proj/all") }
+
+  def toolIdx = Action(Ok(views.html.dashboardidx(MainTempateArguments())))
 
   def viewcmp(pkg:String, cmpName:String) = Action {
     val tclz = (pkg, cmpName) match {

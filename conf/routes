@@ -3,7 +3,8 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.MainController.appIdx
+GET     /                           controllers.MainController.index
+GET     /tools                      controllers.MainController.toolIdx
 GET     /view/:pkg/:tname           controllers.MainController.viewcmp(pkg, tname)
 GET     /view/:tname                controllers.MainController.viewcmp(pkg=null, tname)
 GET		/card/:info					controllers.SwiperToolCtrler.parserCardInfo(info)
@@ -27,6 +28,8 @@ GET     /assets/javascripts/*file       controllers.Assets.at(path="/public/java
 GET     /assets/stylesheets/*file       controllers.Assets.at(path="/public/stylesheets", file)
 GET     /assets/images/*file            controllers.Assets.at(path="/public/images", file)
 GET     /assets/lib/*file               controllers.Assets.at(path="/public/lib", file)
+
+GET     /public/*file                   controllers.Assets.at(path="/public", file)
 
 
 GET		/proj/:proj/editor			controllers.EditorController.editorView(proj)

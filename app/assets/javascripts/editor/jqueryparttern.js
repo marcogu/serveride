@@ -10,7 +10,8 @@ window.onpopstate = function(event) {
 $(function(){
     "use strict";
 
-    var testSepcProjectName = "autotoolt6";
+    var testSepcProjectName = $('#divFileStruct').attr("data-proj");
+    console.log(testSepcProjectName);
     var editingItem = {
         rpath:"",
         renderEle:null
@@ -19,7 +20,7 @@ $(function(){
     var rightClickTreeItem = {
         rpath:"",
         ele:null
-    }
+    };
 
     var contextMenuClickHandler = function(key, options){
         rightClickTreeItem.ele = options.$trigger;
@@ -62,7 +63,7 @@ $(function(){
             }            
         } else {
             var subContainer = $(this).parent("li").find("ul");
-            var querySubUrl = "/proj/autotoolt6/scode/view/" + $(this).attr("data-spath");
+            var querySubUrl = "/proj/" + testSepcProjectName + "/scode/view/" + $(this).attr("data-spath");
 
             $.get(querySubUrl, function(result){
                 subContainer.html(result);
@@ -118,7 +119,7 @@ $(function(){
         }
     };
 
-    $.get("/proj/autotoolt6/scode/view", function(result){
+    $.get("/proj/" + testSepcProjectName + "/scode/view", function(result){
         $("#divFileStruct").html(result); 
         $('.tree li').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
         $('.tree li.parent_li > span').on('click', treeNodeClick);

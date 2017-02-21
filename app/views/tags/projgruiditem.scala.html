@@ -1,0 +1,13 @@
+@import services.actor.DevApp.AppInfo
+@(proj:AppInfo)
+
+<a class="grid__item" href="/proj/@{proj.proj.pname}/editor">
+    <h2 class="title title--preview">@{proj.proj.pname}</h2>
+    <div class="loader"></div>
+    <span class="category">Template: play famework 2</span>
+    <div class="meta meta--preview">
+        <img class="meta__avatar" src="/assets/images/images.jpg" alt="author02" />
+        <span class="meta__date"><i class="fa fa-calendar-o"></i> 7 Apr</span>
+        <span class="meta__reading-time"><i class="fa fa-clock-o"></i> 5 min read</span>
+    </div>
+</a>
