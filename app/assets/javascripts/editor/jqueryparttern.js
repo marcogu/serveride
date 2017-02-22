@@ -169,7 +169,7 @@ $(function(){
 
     function connectToRunningTerminal(){
         if (terminalSocket != null) return;
-        var socketUrl = "ws://localhost:9527/socket/console/" + testSepcProjectName;
+        var socketUrl = "ws://" + document.domain + ":9527/socket/console/" + testSepcProjectName;
         terminalSocket = new WebSocket(socketUrl);
         // terminalSocket.onopen = createTerm;
         terminalSocket.onclose = terminalSocketClose;
