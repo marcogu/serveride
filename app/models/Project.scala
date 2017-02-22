@@ -98,7 +98,7 @@ object Project {
     }
 
     def insertDevelopData(s:QuerySession) = {
-      s.exc("INSERT INTO PROJECT VALUES ('autotoolt6', '/Users/marco/Documents/temp')")
+      s.exc(s"INSERT INTO PROJECT VALUES ('autotoolt6', '${WorkSpace.default(s).url}')")
     }
   }
 }
