@@ -61,11 +61,11 @@ object Project {
       h2db
     } else h2db
 
-    def isEmptyDb(s:QuerySession):Boolean = {
+    private def isEmptyDb(s:QuerySession):Boolean = {
       s.query("SELECT * FROM INFORMATION_SCHEMA.TABLES tb WHERE tb.TABLE_NAME='PROJECT'").isEmpty
     }
 
-    def excDDL(s:QuerySession) = {
+    private def excDDL(s:QuerySession) = {
       val defaultSchema =
         "create TABLE PROJECT (" +
           "    PN VARCHAR(128) not null," +
@@ -81,7 +81,7 @@ object Project {
       s.exc(defaultSchema)
     }
 
-    def insertDefaultData(s:QuerySession) = {
+    private def insertDefaultData(s:QuerySession) = {
       val p = Path(Environment.simple().rootPath.getCanonicalPath)
       s.exc(s"INSERT INTO PROJECT VALUES('${p.name}', '${p.parent.path}')")
 

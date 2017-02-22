@@ -96,9 +96,8 @@ $(function(){
                 editingItem.renderEle = CodeMirror.fromTextArea(txaEle, {
                     lineNumbers: true,
                     matchBrackets: true,
-                    theme: "vibrant-ink",
-                  	//theme: "mdn-like",
-                    mode: "text/x-scala"  // a test
+                    theme: "vibrant-ink", //theme: "mdn-like",
+                    mode:mirroModel(rpath)   // a test : "text/x-scala"
                 }); 
             });
         }
@@ -221,5 +220,52 @@ $(function(){
     });
     $('#spnHideConsole').on('click', hideTerminal);
 
+    function extensionByPath(p) {
+        return (/[.]/.exec(p)) ? /[^.]+$/.exec(p) : undefined;
+    }
 
+    // console.log(mirroModel("/Users/marco/Documents/workspace/jvm/scala/test.scala"));
+    // console.log(mirroModel("test.sbt"));
+    // console.log(mirroModel("test.js"));
+    // console.log(mirroModel("test.xml"));
+    // console.log(mirroModel("test.java"));
+    // console.log(mirroModel("test.css"));
+    // console.log(mirroModel("test.scala.html"));
+    // console.log(mirroModel("test.less"));
+    // console.log(mirroModel("/Users/marco/Documents/temp/autotoolt4/jzlog/166f-58abe688-2"));
+    // console.log(mirroModel("test.other"));
+    // console.log(mirroModel("test"));
+
+    function mirroModel(path){
+        const fextsion = extensionByPath(path);
+        if ( path.lastIndexOf("jzlog/")>=0 ) return "text/x-textile";
+        if (!fextsion) return "";
+        switch(fextsion.toString().toLowerCase()){
+            case "sbt" : ;
+            case "scala" : ;
+                return "text/x-scala";
+                break;
+            case "java" : ;
+                return "text/x-java";
+                break;                    
+            case "html":;
+            case "htm":;
+                return "application/x-ejs";
+                break;
+            case "js":
+            case "javascript":
+                return "text/javascript";
+                break;
+            case "css":
+                return "text/css";
+                break;
+            case "less":
+                return "text/x-less";
+                break;
+            case "sass":
+                return "text/x-sass";
+                break;
+        }
+        return "";
+    }
 });
