@@ -11,7 +11,6 @@ $(function(){
     "use strict";
 
     var testSepcProjectName = $('#divFileStruct').attr("data-proj");
-    console.log(testSepcProjectName);
     var editingItem = {
         rpath:"",
         renderEle:null
@@ -28,28 +27,52 @@ $(function(){
         $("#addFileModal").modal();
     };
 
+    /*
+    File operation restful route define is follow:
+    1 Add file url:
+    /proj/:proj/add/file/*fn 
+    2 Add folder url:
+    /proj/:proj/add/folder/*fn
+    3 Delete file or folder url:
+    /proj/:proj/del/*fn
+    */
     var addFileModalHideHandler = function(e){
-        // taste print:
-        // var i1 = rightClickTreeItem.ele.find("> span");
-        // var i2 = rightClickTreeItem.ele.find("> a > span");
-        // console.log(rightClickTreeItem.ele.attr("data-treenode"));
-        // logic:
         var isNode = rightClickTreeItem.ele.attr("data-treenode") == "node";
+        var pp = rightClickTreeItem.ele.attr("data-spath");
+        var fn = rightClickTreeItem.ele.attr("data-fn");
+        var subContainer = rightClickTreeItem.ele.parent("li").find("."+fn);
+        var addFileName = $('#recipient-fname').val();
+        console.log(subContainer);
+
         if (isNode) { // add sub item in right click node
-
+            var addrequrl = "/proj/" + testSepcProjectName +"/add/folder/" + pp + "/" + addFileName;
+            $.get(addrequrl, function(result){
+                subContainer.first().append(result);
+            }); 
         } else { // right click on file item and append tree item after current click item.
-
+            // var addrequrl = "/proj/" + testSepcProjectName +"/add/file/" + pp;
+            // $.get(addrequrl, function(result){
+            //     rightClickTreeItem.ele.parent.append();
+            // });
+            // console.log("right click on file item");
         }
-        console.log(rightClickTreeItem.ele.parent());
     };
     $("#addFileModal").on('hide.bs.modal', addFileModalHideHandler);
 
     $.contextMenu({ // right click menu
-        selector: '.context-menu-tree', 
+        selector: '.context-menu-treeNode', 
         callback: contextMenuClickHandler,
         items: {
             "add": {name: "添加"},
             "del": {name: "删除"}
+        }
+    });
+
+    $.contextMenu({
+        selector: '.context-menu-treeLeaf', 
+        callback: contextMenuClickHandler,
+        items: {
+            "del": {name: "删除文件"}
         }
     });
 
@@ -131,7 +154,7 @@ $(function(){
 
     function showTerminal(evt){
         var termHeight = $('#divTermPanel').css("height");
-        console.log("show---" + termHeight);
+        // console.log("show---" + termHeight);
         if (termHeight == "20px") {
             $('#divEditorContainer').css("bottom", "200px");
             $('#divFileStruct').css("bottom", "200px");
@@ -235,7 +258,6 @@ $(function(){
     // console.log(mirroModel("/Users/marco/Documents/temp/autotoolt4/jzlog/166f-58abe688-2"));
     // console.log(mirroModel("test.other"));
     // console.log(mirroModel("test"));
-
     function mirroModel(path){
         const fextsion = extensionByPath(path);
         if ( path.lastIndexOf("jzlog/")>=0 ) return "text/x-textile";

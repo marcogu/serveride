@@ -47,8 +47,10 @@ class DevApp(proj:Project) extends Actor{
     case AddFile(_, pathAndName, isFolder) => val realPath = proj.root / pathAndName
       if (realPath.exists) sender() ! OperationResponse(null, succ = false, "已存在同名文件")
       else isFolder match {
-        case true => realPath.createDirectory(); sender() ! OperationResponse(null, succ = true, "文件夹建立成功")
-        case false => realPath.createFile(); sender() ! OperationResponse(null, succ = true, "文件建立成功")
+        case true => val source = SourcePath(pathAndName, false, None)
+          realPath.createDirectory(); sender() ! OperationResponse(source, succ = true, "文件夹建立成功")
+        case false => val source = SourcePath(pathAndName, true, None)
+          realPath.createFile(); sender() ! OperationResponse(source, succ = true, "文件建立成功")
       }
 
     case DelFile(_, pathAndName) => val realPath = proj.root / pathAndName

@@ -51,7 +51,12 @@ class EditorController @Inject() (implicit system:ActorSystem, materializer: Mat
   }
 
   def addFile(pname:String, fn:String, isFolder:String) = Action.async {
-    (projActor ? AddFile(pname, fn, isFolder.equals("folder"))).mapTo[OperationResponse].map { r => Ok(r.toString)}
+    (projActor ? AddFile(pname, fn, isFolder.equals("folder"))).mapTo[OperationResponse].map { r => 
+      r match {
+        case OperationResponse(msg:SourcePath , _, _) => Ok(views.html.tags.treeitem(msg))
+        case other => Ok(other.toString)
+      }
+    }
   }
 
   def delFile(pname:String, fn:String) = Action.async {
