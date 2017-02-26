@@ -24,46 +24,93 @@ $(function(){
     var contextMenuClickHandler = function(key, options){
         rightClickTreeItem.ele = options.$trigger;
         rightClickTreeItem.rpath = rightClickTreeItem.ele.attr("data-spath");
-        $("#addFileModal").modal();
+        switch(key){
+            case "addFolder" :
+                $("#addFileModal").modal();
+                $("#btnAdd").on('click', addFolderHandler);
+                break;
+            case "addFile":
+                $("#addFileModal").modal();
+                $("#btnAdd").on('click', addFileHandler);
+                break;
+            case "del":
+                deleteFileHandler();
+                break;
+        }   
     };
 
-    /*
-    File operation restful route define is follow:
-    1 Add file url:
-    /proj/:proj/add/file/*fn 
-    2 Add folder url:
-    /proj/:proj/add/folder/*fn
-    3 Delete file or folder url:
-    /proj/:proj/del/*fn
-    */
-    var addFileModalHideHandler = function(e){
-        var isNode = rightClickTreeItem.ele.attr("data-treenode") == "node";
+    function deleteFileHandler(){
+        var pp = rightClickTreeItem.ele.attr("data-spath");
+        var fn = rightClickTreeItem.ele.attr("data-fn");
+        var delrequrl = "/proj/" + testSepcProjectName +"/del/" + pp;
+        $.get(delrequrl, function(result){
+            clearTreeNodeEvent(rightClickTreeItem.ele.parent("li"), true).remove();
+        });
+    }
+
+    function clearTreeNodeEvent(node, isDeep){
+        node.find('span').off('click', treeNodeClick);
+        node.find('a > span').off('click', treeLeafClick);
+        if (isDeep) {
+            node.find('li.parent_li > span').off('click', treeNodeClick);     
+            node.find('li.parent_li > a > span').off('click', treeLeafClick);
+        }
+        return node;
+    }
+
+    function addTreeNodeEvent(node, isDeep) {
+        node.addClass('parent_li');
+        node.find('span').on('click', treeNodeClick);
+        node.find('a > span').on('click', treeLeafClick);
+        if (isDeep) {
+            node.find('li.parent_li > span').on('click', treeNodeClick);     
+            node.find('li.parent_li > a > span').on('click', treeLeafClick);
+        }
+        return node;
+    }
+
+    var addFolderHandler = function(){
+        $("#btnAdd").off('click', addFolderHandler);
+        $("#addFileModal").modal('hide');
+
         var pp = rightClickTreeItem.ele.attr("data-spath");
         var fn = rightClickTreeItem.ele.attr("data-fn");
         var subContainer = rightClickTreeItem.ele.parent("li").find("."+fn);
         var addFileName = $('#recipient-fname').val();
-        console.log(subContainer);
+        var addrequrl = "/proj/" + testSepcProjectName +"/add/folder/" + pp + "/" + addFileName;
 
-        if (isNode) { // add sub item in right click node
-            var addrequrl = "/proj/" + testSepcProjectName +"/add/folder/" + pp + "/" + addFileName;
-            $.get(addrequrl, function(result){
-                subContainer.first().append(result);
-            }); 
-        } else { // right click on file item and append tree item after current click item.
-            // var addrequrl = "/proj/" + testSepcProjectName +"/add/file/" + pp;
-            // $.get(addrequrl, function(result){
-            //     rightClickTreeItem.ele.parent.append();
-            // });
-            // console.log("right click on file item");
-        }
+        $.get(addrequrl, function(result){
+            var c = subContainer.first();
+            c.append(result);
+            var t = c.children().last();
+            addTreeNodeEvent(t);
+        });
     };
-    $("#addFileModal").on('hide.bs.modal', addFileModalHideHandler);
+
+    var addFileHandler = function(){
+        $("#btnAdd").off('click', addFileHandler);
+        $("#addFileModal").modal('hide');
+
+        var pp = rightClickTreeItem.ele.attr("data-spath");
+        var fn = rightClickTreeItem.ele.attr("data-fn");
+        var subContainer = rightClickTreeItem.ele.parent("li").find("."+fn);
+        var addFileName = $('#recipient-fname').val();
+        var addrequrl = "/proj/" + testSepcProjectName +"/add/file/" + pp + "/" + addFileName;
+
+        $.get(addrequrl, function(result){
+            var c = subContainer.first();
+            c.append(result);
+            var t = c.children().last();
+            addTreeNodeEvent(t);
+        }); 
+    };
 
     $.contextMenu({ // right click menu
         selector: '.context-menu-treeNode', 
         callback: contextMenuClickHandler,
         items: {
-            "add": {name: "添加"},
+            "addFolder": {name: "添加文件夹"},
+            "addFile": {name: "新建文件"},
             "del": {name: "删除"}
         }
     });

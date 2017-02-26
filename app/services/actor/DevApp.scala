@@ -47,18 +47,15 @@ class DevApp(proj:Project) extends Actor{
     case AddFile(_, pathAndName, isFolder) => val realPath = proj.root / pathAndName
       if (realPath.exists) sender() ! OperationResponse(null, succ = false, "已存在同名文件")
       else isFolder match {
-        case true => val source = SourcePath(pathAndName, false, None)
+        case true => val source = SourcePath(pathAndName, isFile = false, None)
           realPath.createDirectory(); sender() ! OperationResponse(source, succ = true, "文件夹建立成功")
-        case false => val source = SourcePath(pathAndName, true, None)
+        case false => val source = SourcePath(pathAndName, isFile = true, None)
           realPath.createFile(); sender() ! OperationResponse(source, succ = true, "文件建立成功")
       }
 
     case DelFile(_, pathAndName) => val realPath = proj.root / pathAndName
-      if(realPath.exists) realPath.delete() match {
-        case true => sender() ! OperationResponse(null, succ = true, "文件夹删除成功")
-        case false => sender() ! OperationResponse(null, succ = false, "文件夹删除失败")
-      }
-      else sender() ! OperationResponse(null, succ = true, "文件夹删除成功")
+      s"rm -rf ${realPath.path}" ! ;
+      sender() ! OperationResponse(null, succ = true, "文件夹删除成功")
 
     case PathList(_, SourcePath(rp, isD, _)) => sender() ! SourcePath(rp, isD, Some(listRoot(rp)))
   }
@@ -70,9 +67,9 @@ class DevApp(proj:Project) extends Actor{
   def allstructs(parentFile:JFile, c:SourcePath):Unit = parentFile.listFiles.foreach{ f => 
     val subs:ArrayBuffer[SourcePath] = c.subs.get.asInstanceOf[ArrayBuffer[SourcePath]]
     f.isDirectory match{
-      case false => subs += SourcePath(proj.root.relativize(f.getCanonicalPath).path, false, None)
+      case false => subs += SourcePath(proj.root.relativize(f.getCanonicalPath).path, isFile = false, None)
       case true =>
-        val node = SourcePath(proj.root.relativize(f.getCanonicalPath).path, true, Some(ArrayBuffer()))
+        val node = SourcePath(proj.root.relativize(f.getCanonicalPath).path, isFile = true, Some(ArrayBuffer()))
         subs += node
         allstructs(f, node)
     }
